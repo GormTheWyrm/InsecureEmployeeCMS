@@ -27,6 +27,9 @@ manager_id int (10) NULL,
 PRIMARY KEY (id)
 );
 
+SELECT * FROM department;
+SELECT * FROM employee;
+SELECT * FROM role;
 
 -- testing
 
