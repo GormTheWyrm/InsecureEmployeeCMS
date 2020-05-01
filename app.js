@@ -16,7 +16,7 @@ questions = [
         type: "list",
         name: "add",
         message: "Add an Employee, Department, or Role?",
-        choices: ["Employee", "Department", "Role"],
+        choices: ["Employee", "Department", "Role", "Go Back"],
         when: function (answers) {
             return answers.action === "Add";
         }
@@ -25,7 +25,7 @@ questions = [
         type: "list",
         name: "update",
         message: "Update an Employee, Department, or Role?",
-        choices: ["Employee", "Department", "Role"],
+        choices: ["Employee", "Department", "Role", "Go Back"],
         when: function (answers) {
             return answers.action === "Update";
         }
@@ -34,7 +34,7 @@ questions = [
         type: "list",
         name: "delete",
         message: "Remove an Employee, Department, or Role?",
-        choices: ["Employee", "Department", "Role"],
+        choices: ["Employee", "Department", "Role", "Go Back"],
         when: function (answers) {
             return answers.action === "Delete";
         }
@@ -43,7 +43,7 @@ questions = [
         type: "list",
         name: "view",
         message: "View an Employee, Department, or Role?",
-        choices: ["Employee", "Department", "Role", "Budget"],
+        choices: ["Employee", "Department", "Role", "Budget", "Go Back"],
         when: function (answers) {
             return answers.action === "View";
         }
@@ -142,30 +142,54 @@ questions = [
             return answers.add === "Role";
         }
     },
-    //UPDATE FUNCTIONS - employee
-    //
+    {
+        type: "input",
+        name: "UpdateId",
+        message: "Enter the ID for the object you want to update",
+        //could update this to search by names but ID is easier for now
+        //should search by employee id, department id, role
+        //should department searc hby department id or plain id?
+        when: function (answers) {
+            return answers.action === "Update";
+        }
+    },
+        {
+        type: "input",
+        name: "DeleteId",
+        message: "Enter the ID for the object you want to delete",
+        //could update this to search by names but ID is easier for now
+        //should search by employee id, department id, role
+        //should department searc hby department id or plain id?
+        when: function (answers) {
+            return answers.action === "Delete";
+        }
+    }
+]
+
+let updateQuestions = [
+    // UPDATE FUNCTIONS - employee
+
     {
         type: "checkbox",
         message: "What aspects of your employee do you want to change?",
         name: "employeeChoice",
-        choices: [{Name: "First Name"}, {Name: "Last Name"}, {Name: "role"}, {Name: "manager"}],
-      when: function (answers) {
-            return answers.Update === "Employee";
+        choices: [{ name: "First Name" }, { name: "Last Name" }, { name: "Role" }, { name: "Manager" }],
+        when: function (answers) {
+            return answers.update === "Employee";
         }
-        //this will be used to input a lot of data to the update funciton...
     },
     {
         type: "input",
         name: "UpdateEmployeeFirst",
         message: "Enter a new First Name for this employee",
         when: function (answers) {
-            return answers.Update === "Employee";
+            return answers.update === "Employee";
         }
     },
     {
         type: "input",
         name: "UpdateEmployeeRole",
-        message: "Enter a new Role ID for this employee", 
+        message: "Enter a new Role ID for this employee",
         //would be great to have search for names functionality
         when: function (answers) {
             return answers.Update === "Employee";
@@ -183,28 +207,13 @@ questions = [
 
     //update role
 
+
 ]
 //remember to parseInt !
 //pass in specific questions depending on what last prompt pulled...
-let addQuestions = [
-    //ADD FUNCTION
-    //do I want to do manager and role by id or name?
-    //perhaps select an id would be best...
-    //doing this as a separate function allows me to pull information by calling other functions... wait...
+let deleteQuestions = [
 
 ]
-
-
-//action, add/delete/etc, 
-//view function can be a single function that passes in table, and ID; id of 0 will list all
-
-//add function passes in table, then all variables needed...
-// would be easier if all variables were from same data source...
-//could add a confirm for validation... at end!
-
-
-
-
 
 
 
@@ -231,17 +240,32 @@ Bonus points if you're able to:
   * View the total utilized budget of a department -- ie the combined salaries of all employees in that department
 
   */
-//SHOULD I MAKE APP A CLASS?
 
 
-// Functions
+/* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
+// FUNCTIONS    
+function addRole() {
+
+}
+function addDept() {
+
+}
+function addEmployee() {
+
+}
+function viewData(table, inputId) {
+
+}
+function updateData(table, Column, inputData) {
+    // update function could need 3 parameters; table and data being changed, and the actual data!
+    // collumn is determined by ...choice
+    //...could have a choice or list. Is there a way to perform this function multiple times? YES!
+    //this function will be called under each if statement that matches- meaning user can choose what to change in prompt!
+    //...just need to figure out how to get data fromchoice... easy!
+    console.log(`table ${table} Column ${Column}, inputData ${inputData}`);
+}
 //....if id = 0; select * ! (get all options!)
-//add department
-//add role (job title)
-//add department
-//view employees
-//view department
-//view roles
+
 //update employee information
 
 //update manager...
@@ -253,49 +277,81 @@ Bonus points if you're able to:
 
 function mainMenu() {
     console.log("Welcome to the Open Employee Management Application.\n Main Menu");
-    
-    //inquirer prompt
-    //add, view, or update... or delete
-    //employee, department or role (job title)
-    //employee has view single, view by department, view by manager or view all options
-    //...view-> employee, department, role, budget
-    //...add-> employee, department, role
-    //...update-> role, employee, department
-    //delete-> role, employee, department
-
-    //main menu will have to call various finctions...
     inquirer.prompt(questions).then(function (answers) {
         console.log(answers);
-        //I can use when to make this a single prompt instead of one prompt for each option
-
+        //ADD
         if (answers.action === "Add") {
             //nested if figures out which function to call
             //pass in parameters from here
             //write function above
-            console.log("you want to add...");
+
             if (answers.add === "Employee") {
                 //addEmployee(...);
+            } else if (answers.add = "Department") {
+                //addDept();
+
+            } else if (answers.add = "Role") {
+                //addrole();
             }
+            mainMenu();
+        }
+        //VIEW
+        else if (answers.action === "View") {
+            if (answers.view === "Employee") {
+                //viewData(answers.)
+            } else if (answers.view = "Department") {
+                //addDept();
 
-            "Department", "Role"
-        } else if (answers.action === "View") {
+            } else if (answers.view = "Role") {
+                //addrole();
+            } else if (answers.view = "Budget") {
+                //viewBudget();
+            }
+            mainMenu();
+        }
+        //UPDATE    updateData(table, Column, inputData)        employeeChoice, updateemployeeFirst...last,role,manager
+        else if (answers.action === "Update") {
+            inquirer.prompt(updateQuestions).then(function (updateAnswers) {
+                if (answers.update === "Employee") {
+                    // if (answers.employeeChoice === )
+                    //for loop to catch employee choice array
+                    for (i = 0; i < answers.employeeChoice.length; i++) {
+                        if (UpdateAnswers.employeeChoice[i] === "First Name") {
+                            updateData("employee", "first_name", answers.updateEmployeeFirst);
+                        } else if (UpdateAnswers.employeeChoice[i] === "LastName") {
+                            updateData("employee", "first_name", answers.updateEmployeeLast);
+                        } else if (UpdateAnswers.employeeChoice[i] === "Role") {
+                            updateData("employee", "first_name", answers.updateEmployeeRole);
+                        } else if (UpdateAnswers.employeeChoice[i] === "Manager") {
+                            updateData("employee", "first_name", answers.updateEmployeeManager);
+                        }
+                    }
 
+                } else if (answers.update = "Department") {
+                    //
 
-            console.log("this will view " + answers.view);
-
-        } else if (answers.action === "Update") {
-
-
+                } else if (answers.update = "Role") {
+                    //
+                }
             console.log("you want to Update...");
-        } else if (answers.action === "Delete") {
+            mainMenu();
+            });
+        }
+        //DELETE
+        else if (answers.action === "Delete") {
 
 
             console.log("you want to delete...");
-        } else if (answers.action === "Exit") {
+            mainMenu();
 
-
-            console.log("you want to Exit...");
         }
+        //EXIT
+        else if (answers.action === "Exit") {
+
+
+            console.log("Exiting");
+            return 0;
+        } else { mainMenu(); } //should catch my "back" options
 
 
     });
