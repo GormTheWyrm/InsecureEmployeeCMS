@@ -16,7 +16,7 @@ questions = [
         type: "list",
         name: "add",
         message: "Add an Employee, Department, or Role?",
-        choices: ["Employee", "Department", "Role", "Go Back"],
+        choices: ["Employee", "Department", "Role"],
         when: function (answers) {
             return answers.action === "Add";
         }
@@ -25,7 +25,7 @@ questions = [
         type: "list",
         name: "update",
         message: "Update an Employee, Department, or Role?",
-        choices: ["Employee", "Department", "Role", "Go Back"],
+        choices: ["Employee", "Department", "Role",],
         when: function (answers) {
             return answers.action === "Update";
         }
@@ -34,7 +34,7 @@ questions = [
         type: "list",
         name: "delete",
         message: "Remove an Employee, Department, or Role?",
-        choices: ["Employee", "Department", "Role", "Go Back"],
+        choices: ["Employee", "Department", "Role"],
         when: function (answers) {
             return answers.action === "Delete";
         }
@@ -43,7 +43,7 @@ questions = [
         type: "list",
         name: "view",
         message: "View an Employee, Department, or Role?",
-        choices: ["Employee", "Department", "Role", "Budget", "Go Back"],
+        choices: ["Employee", "Department", "Role", "Budget"],
         when: function (answers) {
             return answers.action === "View";
         }
@@ -143,9 +143,10 @@ questions = [
         }
     },
     {
+        //this runs for any update!
         type: "input",
         name: "updateId",
-        message: "Enter the ID for the object you want to update",
+        message: "Enter the ID for the object you want to update. An ID of 0 will cacel the operation.",
         when: function (answers) {
             return answers.action === "Update";
         }
@@ -164,9 +165,9 @@ questions = [
         name: "updateEmployeeFirst",
         message: "Enter a new First Name for this employee",
         when: function (answers) {
-            if (answers.action === "Update" && answers.update === "Employee"){
-            return answers.employeeChoice.includes("First Name");
-            } else {return false;}
+            if (answers.action === "Update" && answers.update === "Employee") {
+                return answers.employeeChoice.includes("First Name");
+            } else { return false; }
         }
     },
     {
@@ -174,9 +175,9 @@ questions = [
         name: "updateEmployeeLast",
         message: "Enter a new Last Name for this employee",
         when: function (answers) {
-            if (answers.action === "Update" && answers.update === "Employee"){
-            return answers.employeeChoice.includes("Last Name");
-            } else {return false;}
+            if (answers.action === "Update" && answers.update === "Employee") {
+                return answers.employeeChoice.includes("Last Name");
+            } else { return false; }
         }
     },
     {
@@ -185,9 +186,9 @@ questions = [
         message: "Enter a new Role ID for this employee",
         //would be great to have search for names functionality
         when: function (answers) {
-            if (answers.action === "Update" && answers.update === "Employee"){
-            return answers.employeeChoice.includes("Role");
-            } else {return false;}
+            if (answers.action === "Update" && answers.update === "Employee") {
+                return answers.employeeChoice.includes("Role");
+            } else { return false; }
         }
     },
     {
@@ -195,9 +196,9 @@ questions = [
         name: "updateEmployeeManager",
         message: "Enter a new Manager ID for this employee",
         when: function (answers) {
-            if (answers.action === "Update" && answers.update === "Employee"){
-            return answers.employeeChoice.includes("Manager");
-            } else {return false;}
+            if (answers.action === "Update" && answers.update === "Employee") {
+                return answers.employeeChoice.includes("Manager");
+            } else { return false; }
         }
     },
     //update department
@@ -215,28 +216,58 @@ questions = [
         name: "updateDeptId",
         message: "Enter a new Dept ID for this department",
         when: function (answers) {
-            if (answers.action === "Update" && answers.update === "Department"){
-            return answers.deptChoice.includes("Dept ID");
-            } else {return false;}
+            if (answers.action === "Update" && answers.update === "Department") {
+                return answers.deptChoice.includes("Dept ID");
+            } else { return false; }
         }
     },
     {
         type: "input",
         name: "updateDeptName",
         message: "Enter a new Dept Name for this Department",
-        //would be great to have search for names functionality
         when: function (answers) {
-            if (answers.action === "Update" && answers.update === "Department"){
-            return answers.deptChoice.includes("Dept Name");
-            } else {return false;}
+            if (answers.action === "Update" && answers.update === "Department") {
+                return answers.deptChoice.includes("Dept Name");
+            } else { return false; }
+        }
+    },
+    //UPDATE ROLE
+    {
+        type: "checkbox",
+        name: "roleChoice",
+        message: "What aspects of your Role do you want to change?",
+        choices: [{ name: "Title" }, { name: "Salary" }],
+        when: function (answers) {
+            return answers.update === "Role";
+        }
+    },
+    {
+        type: "input",
+        name: "updateRoleTitle",
+        message: "Enter a new Title for this Role",
+        when: function (answers) {
+            if (answers.action === "Update" && answers.update === "Role") {
+                return answers.roleChoice.includes("Title");
+            } else { return false; }
+        }
+    },
+    {
+        type: "input",
+        name: "updateRoleSalary",
+        message: "Enter a new Salary for this Role",
+        when: function (answers) {
+            if (answers.action === "Update" && answers.update === "Role") {
+                return answers.roleChoice.includes("Salary");
+            } else { return false; }
         }
     },
 
-//delete
+
+    //delete
     {
         type: "input",
         name: "deleteId",
-        message: "Enter the ID for the object you want to delete",
+        message: "Enter the ID for the object you want to delete. An ID of 0 will cacel the operation.",
         //could update this to search by names but ID is easier for now
         //should search by employee id, department id, role
         //should department searc hby department id or plain id?
@@ -246,24 +277,17 @@ questions = [
     }
 ]
 
+
+
 let updateQuestions = [
     // UPDATE FUNCTIONS - employee
-
-
     //update role
-
-
 ]
 //remember to parseInt !
 //pass in specific questions depending on what last prompt pulled...
 let deleteQuestions = [
-
 ]
 
-
-
-
-//3 major tables in 1 database; department, role, employee
 /*
   
 Build a command-line application that at a minimum allows the user to:
@@ -301,7 +325,7 @@ function addEmployee() {
 function viewData(table, inputId) {
 
 }
-function updateData(table, Column, inputData) {
+function updateData(table, Column, id, inputData) {
     // update function could need 3 parameters; table and data being changed, and the actual data!
     // collumn is determined by ...choice
     //...could have a choice or list. Is there a way to perform this function multiple times? YES!
@@ -323,7 +347,7 @@ function updateData(table, Column, inputData) {
 function mainMenu() {
     console.log("Welcome to the Open Employee Management Application.\n Main Menu");
     inquirer.prompt(questions).then(function (answers) {
-        console.log(answers);
+        // console.log(answers);
         //ADD
         if (answers.action === "Add") {
             //nested if figures out which function to call
@@ -356,32 +380,48 @@ function mainMenu() {
         }
         //UPDATE    updateData(table, Column, inputData)        employeeChoice, updateemployeeFirst...last,role,manager
         else if (answers.action === "Update") {
-            //should console log employee name?
-            // inquirer.prompt(updateQuestions).then(function (answers) {
-                if (answers.update === "Employee") {
-                    // if (answers.employeeChoice === )
-                    //for loop to catch employee choice array
-                    for (i = 0; i < answers.employeeChoice.length; i++) {
-                        if (answers.employeeChoice[i] === "First Name") {
-                            updateData("employee", "first_name", answers.updateEmployeeFirst);
-                            //current bug; first name caught even if nothing entered
-                        } else if (answers.employeeChoice[i] === "LastName") {
-                            updateData("employee", "first_name", answers.updateEmployeeLast);
-                        } else if (answers.employeeChoice[i] === "Role") {
-                            updateData("employee", "first_name", answers.updateEmployeeRole);
-                        } else if (answers.employeeChoice[i] === "Manager") {
-                            updateData("employee", "first_name", answers.updateEmployeeManager);
-                        }
+            if (answers.update === "Employee") {
+                for (i = 0; i < answers.employeeChoice.length; i++) {
+                    if (answers.employeeChoice[i] === "First Name") {
+                        updateData("employee", "first_name", answers.updateId, answers.updateEmployeeFirst);
+                        //current bug; first name caught even if nothing entered
+                    } else if (answers.employeeChoice[i] === "Last Name") {
+                        updateData("employee", "last_name", answers.updateId, answers.updateEmployeeLast);
+                    } else if (answers.employeeChoice[i] === "Role") {
+                        updateData("employee", "role_id", answers.updateId, answers.updateEmployeeRole);
+                    } else if (answers.employeeChoice[i] === "Manager") {
+                        updateData("employee", "manager_id", answers.updateId, answers.updateEmployeeManager);
                     }
-
-                } else if (answers.update = "Department") {
-                    //
-
-                } else if (answers.update = "Role") {
-                    //
                 }
-                console.log("you want to Update...");
-                mainMenu();
+
+            } else if (answers.update === "Department") {
+                //
+                for (i = 0; i < answers.deptChoice.length; i++) {
+
+                    if (answers.deptChoice[i] === "Dept ID") {
+                        updateData("department", "dept_id", answers.updateId, answers.updateDeptId);
+                    }
+                    else
+                        if (answers.deptChoice[i] === "Dept Name") {
+                            updateData("department", "name", answers.updateId, answers.updateDeptName);
+                            //current bug; first name caught even if nothing entered
+                        }
+                        else { console.log("error"); }
+                }
+                    //this seems to be sending the name after the dept_id...
+            } else if (answers.update === "Role") {
+                //
+                for (i = 0; i < answers.roleChoice.length; i++) {
+                    if (answers.roleChoice[i] === "Title") {
+                        updateData("role", "title", answers.updateId, answers.updateRoleTitle);
+                        //current bug; first name caught even if nothing entered
+                    } else if (answers.roleChoice[i] === "Salary") {
+                        updateData("role", "salary", answers.updateId, answers.updateRoleSalary);
+                    }
+                }
+            }
+            console.log("you want to Update...");
+            mainMenu();
             // });
         }
         //DELETE
@@ -398,7 +438,7 @@ function mainMenu() {
 
             console.log("Exiting");
             return 0;
-        } else { mainMenu(); } //should catch my "back" options
+        } else { mainMenu(); } 
 
 
     });
