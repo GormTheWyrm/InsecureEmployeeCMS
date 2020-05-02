@@ -263,11 +263,11 @@ questions = [
     },
 
 
-    //delete
+    //delete      
     {
         type: "input",
         name: "deleteId",
-        message: "Enter the ID for the object you want to delete. An ID of 0 will cacel the operation.",
+        message: "Enter the ID for the object you want to delete. An ID of 0 will cancel the operation.",
         //could update this to search by names but ID is easier for now
         //should search by employee id, department id, role
         //should department searc hby department id or plain id?
@@ -275,6 +275,7 @@ questions = [
             return answers.action === "Delete";
         }
     }
+    //note that user chooses the action (delete) and the table in the first few questions
 ]
 
 
@@ -287,28 +288,6 @@ let updateQuestions = [
 //pass in specific questions depending on what last prompt pulled...
 let deleteQuestions = [
 ]
-
-/*
-  
-Build a command-line application that at a minimum allows the user to:
-
-  * Add departments, roles, employees
-
-  * View departments, roles, employees
-
-  * Update employee roles
-
-Bonus points if you're able to:
-
-  * Update employee managers
-
-  * View employees by manager
-
-  * Delete departments, roles, and employees
-
-  * View the total utilized budget of a department -- ie the combined salaries of all employees in that department
-
-  */
 
 
 /* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
@@ -450,5 +429,7 @@ mainMenu();
 
 
 
-//call start
-//might try making it a do while loop, ending function by turning a isOn variable to false
+
+//consider where to put a "view by manager option"
+//move questions into a new file
+// write functions- and sql
