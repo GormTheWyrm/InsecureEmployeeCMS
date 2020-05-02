@@ -201,6 +201,9 @@ questions = [
             } else { return false; }
         }
     },
+    //  NEED ADD DEPT AND ADD ROLE!
+
+
     //update department
     {
         type: "checkbox",
@@ -292,13 +295,13 @@ let deleteQuestions = [
 
 /* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
 // FUNCTIONS    
-function addRole() {
+function addEmployeeData(first, last, role, manager){
 
 }
-function addDept() {
+function addDeptData(name, deptId){
 
 }
-function addEmployee() {
+function addRoleData(title, salary){
 
 }
 function viewData(table, inputId) {
@@ -311,6 +314,9 @@ function updateData(table, Column, id, inputData) {
     //this function will be called under each if statement that matches- meaning user can choose what to change in prompt!
     //...just need to figure out how to get data fromchoice... easy!
     console.log(`table ${table} Column ${Column}, inputData ${inputData}`);
+}
+function deleteData(table, id){
+
 }
 //....if id = 0; select * ! (get all options!)
 
@@ -334,12 +340,13 @@ function mainMenu() {
             //write function above
 
             if (answers.add === "Employee") {
-                //addEmployee(...);
+                addEmployeeData(answers.updateEmployeeFirst, answers.updateEmployeeLast, answers.updateEmployeeRole, answers.updateEmployeeManager);
             } else if (answers.add = "Department") {
-                //addDept();
-
+                //addDeptData();
+                //need to add questions
             } else if (answers.add = "Role") {
-                //addrole();
+                //addRoleData();
+                //need to add questions
             }
             mainMenu();
         }
