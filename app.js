@@ -1,16 +1,54 @@
+//maybe this should be a json file that passes in questions... or a class?
 //change name to "Open Employee CMS"
 const fs = require("fs");
 const inquirer = require("inquirer");
-//mysql
-//console tabel?
+const mysql = require("mysql");
+const cTable = require("console.table");
+/*
+console.table([
+  {
+    name: 'foo',
+    age: 10
+  }, {
+    name: 'bar',
+    age: 20
+  }
+]);
 
-// variable declarations
+// prints
+name  age
+----  ---
+foo   10
+bar   20
+*/
+//console tabel?
+// let questions = require("./assets/questions.js");
+//this might not work...
+
+const connection = mysql.createConnection({
+    host: "localhost",
+
+    // Your port; if not 3306
+    port: 3306,
+
+    // Your username
+    user: "root",
+
+    // Your password
+    password: "123",
+    //your database
+    database: "open_employee_db"
+});
+
+
+
+/* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
 questions = [
     {
         type: "list",
         name: "action",
         message: "Add, View, Update, Delete or Exit?",
-        choices: ["Add", "View", "Update", "Delete", "Exit"]
+        choices: ["Add", "View", "Update", "Delete", "Exit\n"]
     },
     {
         type: "list",
@@ -25,7 +63,7 @@ questions = [
         type: "list",
         name: "update",
         message: "Update an Employee, Department, or Role?",
-        choices: ["Employee", "Department", "Role",],
+        choices: ["Employee", "Department", "Role"],
         when: function (answers) {
             return answers.action === "Update";
         }
@@ -125,7 +163,6 @@ questions = [
         }
     },
     //ADD FUNCTION INPUTS - Role
-    //add; title and salary
     {
         type: "input",
         name: "addRoleTitle",
@@ -151,6 +188,7 @@ questions = [
             return answers.action === "Update";
         }
     },
+    //EMPLOYEE!
     {
         type: "checkbox",
         message: "What aspects of your employee do you want to change?",
@@ -283,29 +321,52 @@ questions = [
 
 
 
-let updateQuestions = [
-    // UPDATE FUNCTIONS - employee
-    //update role
-]
-//remember to parseInt !
-//pass in specific questions depending on what last prompt pulled...
-let deleteQuestions = [
-]
+
 
 
 /* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
 // FUNCTIONS    
-function addEmployeeData(first, last, role, manager){
+function addEmployeeData(first, last, role, manager) {
+    // console.log(first);
+        connection.query(
+        "INSERT INTO employee SET ?",
+    {
+        first_name: first,
+        last_name: last,
+        role_id: role,
+        manager_id: manager
+    },
+    function(err, res) {
+        if (err) throw err;
+        console.table(res);
+        //need to update product? code I stole this from had an update function- icecream crud
+    });
+    
+
+    //insert into employee (first_name, last_name, role_id, manager_id)
 
 }
-function addDeptData(name, deptId){
+function addDeptData(name, deptId) {
 
 }
-function addRoleData(title, salary){
+function addRoleData(title, salary) {
 
 }
-function viewData(table, inputId) {
-
+function viewData(table, column, inputId) {
+    if (inputId == "0") { 
+        connection.query(`SELECT * FROM ${table}`, function (err, res) {
+            if (err) throw err;
+            console.table(res);
+        });
+        //will need to be a join
+    }
+    else {
+        connection.query(`SELECT * FROM ${table} WHERE ${column}=?`, [inputId], function (err, res) {
+            if (err) throw err;
+            console.table(res);
+        });
+        //probably needs to be a join...
+    }
 }
 function updateData(table, Column, id, inputData) {
     // update function could need 3 parameters; table and data being changed, and the actual data!
@@ -315,7 +376,7 @@ function updateData(table, Column, id, inputData) {
     //...just need to figure out how to get data fromchoice... easy!
     console.log(`table ${table} Column ${Column}, inputData ${inputData}`);
 }
-function deleteData(table, id){
+function deleteData(table, id) {
 
 }
 //....if id = 0; select * ! (get all options!)
@@ -340,25 +401,27 @@ function mainMenu() {
             //write function above
 
             if (answers.add === "Employee") {
-                addEmployeeData(answers.updateEmployeeFirst, answers.updateEmployeeLast, answers.updateEmployeeRole, answers.updateEmployeeManager);
+                addEmployeeData(answers.addEmployeeFirst, answers.addEmployeeLast, answers.addEmployeeRole, answers.addEmployeeManager);
             } else if (answers.add = "Department") {
                 //addDeptData();
                 //need to add questions
             } else if (answers.add = "Role") {
                 //addRoleData();
                 //need to add questions
-            }
+            }            
             mainMenu();
         }
-        //VIEW
+        //VIEW  pass in table, column, inputId
+
         else if (answers.action === "View") {
             if (answers.view === "Employee") {
-                //viewData(answers.)
+                viewData("employee", "id", answers.viewId);
             } else if (answers.view = "Department") {
-                //addDept();
-
+                viewData("department", "department_id", answers.viewId);
+                //Im passing in Dept ID
             } else if (answers.view = "Role") {
-                //addrole();
+                viewData("role", "role_id", answers.viewId);
+                //I'm passing in role ID
             } else if (answers.view = "Budget") {
                 //viewBudget();
             }
@@ -394,7 +457,7 @@ function mainMenu() {
                         }
                         else { console.log("error"); }
                 }
-                    //this seems to be sending the name after the dept_id...
+                //this seems to be sending the name after the dept_id...
             } else if (answers.update === "Role") {
                 //
                 for (i = 0; i < answers.roleChoice.length; i++) {
@@ -419,12 +482,13 @@ function mainMenu() {
 
         }
         //EXIT
-        else if (answers.action === "Exit") {
+        else if (answers.action.trim() === "Exit") {
 
 
             console.log("Exiting");
+            connection.end();
             return 0;
-        } else { mainMenu(); } 
+        } else { mainMenu(); }
 
 
     });
@@ -440,3 +504,11 @@ mainMenu();
 //consider where to put a "view by manager option"
 //move questions into a new file
 // write functions- and sql
+
+//add add
+//add update
+//add delete
+//will need to make view into a join function...
+//will want to xx.trim() some values...
+
+//my answers.updateEmployeeFirst are showing [object object] instead of a string... but they otherwise work?

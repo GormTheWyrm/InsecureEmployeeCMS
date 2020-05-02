@@ -1,5 +1,5 @@
 # InsecureEmployeeCMS
-Content Management System that allows a user to track employees salaries and gropt them by department
+Content Management System that allows a user to track employees salaries and group them by department. This program is not designed to contain sensitive data and as such does not have a Social Security number option.
 
 
 
@@ -73,7 +73,7 @@ How do you deliver this? Here are some guidelines:
 
 * Use [InquirerJs](https://www.npmjs.com/package/inquirer/v/0.2.3) NPM package to interact with the user via the command-line.
 
-* Use [console.table](https://www.npmjs.com/package/console.table) to print MySQL rows to the console. There is a built-in version of `console.table`, but the NPM package formats the data a little better for our purposes.
+* Use [console.table](https:/n/www.npmjs.com/package/console.table) to print MySQL rows to the console. There is a built-in version of `console.table`, but the NPM package formats the data a little better for our purposes.
 
 * You may wish to have a separate file containing functions for performing specific SQL queries you'll need to use. Could a constructor function or a class be helpful for organizing these?
 
