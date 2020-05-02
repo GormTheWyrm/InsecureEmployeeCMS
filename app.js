@@ -144,18 +144,98 @@ questions = [
     },
     {
         type: "input",
-        name: "UpdateId",
+        name: "updateId",
         message: "Enter the ID for the object you want to update",
-        //could update this to search by names but ID is easier for now
-        //should search by employee id, department id, role
-        //should department searc hby department id or plain id?
         when: function (answers) {
             return answers.action === "Update";
         }
     },
-        {
+    {
+        type: "checkbox",
+        message: "What aspects of your employee do you want to change?",
+        name: "employeeChoice",
+        choices: [{ name: "First Name" }, { name: "Last Name" }, { name: "Role" }, { name: "Manager" }],
+        when: function (answers) {
+            return answers.update === "Employee";
+        }
+    },
+    {
         type: "input",
-        name: "DeleteId",
+        name: "updateEmployeeFirst",
+        message: "Enter a new First Name for this employee",
+        when: function (answers) {
+            if (answers.action === "Update" && answers.update === "Employee"){
+            return answers.employeeChoice.includes("First Name");
+            } else {return false;}
+        }
+    },
+    {
+        type: "input",
+        name: "updateEmployeeLast",
+        message: "Enter a new Last Name for this employee",
+        when: function (answers) {
+            if (answers.action === "Update" && answers.update === "Employee"){
+            return answers.employeeChoice.includes("Last Name");
+            } else {return false;}
+        }
+    },
+    {
+        type: "input",
+        name: "updateEmployeeRole",
+        message: "Enter a new Role ID for this employee",
+        //would be great to have search for names functionality
+        when: function (answers) {
+            if (answers.action === "Update" && answers.update === "Employee"){
+            return answers.employeeChoice.includes("Role");
+            } else {return false;}
+        }
+    },
+    {
+        type: "input",
+        name: "updateEmployeeManager",
+        message: "Enter a new Manager ID for this employee",
+        when: function (answers) {
+            if (answers.action === "Update" && answers.update === "Employee"){
+            return answers.employeeChoice.includes("Manager");
+            } else {return false;}
+        }
+    },
+    //update department
+    {
+        type: "checkbox",
+        name: "deptChoice",
+        message: "What aspects of your Department do you want to change?",
+        choices: [{ name: "Dept Name" }, { name: "Dept ID" }],
+        when: function (answers) {
+            return answers.update === "Department";
+        }
+    },
+    {
+        type: "input",
+        name: "updateDeptId",
+        message: "Enter a new Dept ID for this department",
+        when: function (answers) {
+            if (answers.action === "Update" && answers.update === "Department"){
+            return answers.deptChoice.includes("Dept ID");
+            } else {return false;}
+        }
+    },
+    {
+        type: "input",
+        name: "updateDeptName",
+        message: "Enter a new Dept Name for this Department",
+        //would be great to have search for names functionality
+        when: function (answers) {
+            if (answers.action === "Update" && answers.update === "Department"){
+            return answers.deptChoice.includes("Dept Name");
+            } else {return false;}
+        }
+    },
+
+//delete
+    {
+        type: "input",
+        name: "deleteId",
         message: "Enter the ID for the object you want to delete",
         //could update this to search by names but ID is easier for now
         //should search by employee id, department id, role
@@ -169,41 +249,6 @@ questions = [
 let updateQuestions = [
     // UPDATE FUNCTIONS - employee
 
-    {
-        type: "checkbox",
-        message: "What aspects of your employee do you want to change?",
-        name: "employeeChoice",
-        choices: [{ name: "First Name" }, { name: "Last Name" }, { name: "Role" }, { name: "Manager" }],
-        when: function (answers) {
-            return answers.update === "Employee";
-        }
-    },
-    {
-        type: "input",
-        name: "UpdateEmployeeFirst",
-        message: "Enter a new First Name for this employee",
-        when: function (answers) {
-            return answers.update === "Employee";
-        }
-    },
-    {
-        type: "input",
-        name: "UpdateEmployeeRole",
-        message: "Enter a new Role ID for this employee",
-        //would be great to have search for names functionality
-        when: function (answers) {
-            return answers.Update === "Employee";
-        }
-    },
-    {
-        type: "input",
-        name: "UpdateEmployeeManager",
-        message: "Enter a new Manager ID for this employee",
-        when: function (answers) {
-            return answers.Update === "Employee";
-        }
-    }
-    //update dept
 
     //update role
 
@@ -311,18 +356,20 @@ function mainMenu() {
         }
         //UPDATE    updateData(table, Column, inputData)        employeeChoice, updateemployeeFirst...last,role,manager
         else if (answers.action === "Update") {
-            inquirer.prompt(updateQuestions).then(function (updateAnswers) {
+            //should console log employee name?
+            // inquirer.prompt(updateQuestions).then(function (answers) {
                 if (answers.update === "Employee") {
                     // if (answers.employeeChoice === )
                     //for loop to catch employee choice array
                     for (i = 0; i < answers.employeeChoice.length; i++) {
-                        if (UpdateAnswers.employeeChoice[i] === "First Name") {
+                        if (answers.employeeChoice[i] === "First Name") {
                             updateData("employee", "first_name", answers.updateEmployeeFirst);
-                        } else if (UpdateAnswers.employeeChoice[i] === "LastName") {
+                            //current bug; first name caught even if nothing entered
+                        } else if (answers.employeeChoice[i] === "LastName") {
                             updateData("employee", "first_name", answers.updateEmployeeLast);
-                        } else if (UpdateAnswers.employeeChoice[i] === "Role") {
+                        } else if (answers.employeeChoice[i] === "Role") {
                             updateData("employee", "first_name", answers.updateEmployeeRole);
-                        } else if (UpdateAnswers.employeeChoice[i] === "Manager") {
+                        } else if (answers.employeeChoice[i] === "Manager") {
                             updateData("employee", "first_name", answers.updateEmployeeManager);
                         }
                     }
@@ -333,9 +380,9 @@ function mainMenu() {
                 } else if (answers.update = "Role") {
                     //
                 }
-            console.log("you want to Update...");
-            mainMenu();
-            });
+                console.log("you want to Update...");
+                mainMenu();
+            // });
         }
         //DELETE
         else if (answers.action === "Delete") {
