@@ -327,7 +327,7 @@ questions = [
 /* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
 // FUNCTIONS    
 function addEmployeeData(first, last, role, manager) {  //these are undefined again... why?
-    console.log("***" + first);
+    // console.log("***" + first);
     //is now adding employees to database- but not displaying them to user
     connection.query(
         "INSERT INTO employee SET ?",
@@ -339,13 +339,16 @@ function addEmployeeData(first, last, role, manager) {  //these are undefined ag
         },
         function (err, res) {
             if (err) throw err;
+            // console.table(res);
             // console.log(res + "added to database");
             console.log("employee added to database");
 
-        });
+        }
+    );
+    // console.table(query.sql);
 }
 function addDeptData(dName, deptId) {   //add dept
-    connection.query(
+     connection.query(
         "INSERT INTO department SET ?",
         {
             name: dName,
@@ -356,23 +359,29 @@ function addDeptData(dName, deptId) {   //add dept
             // console.table(res); //sql is working, console.table is not
             // console.log(res);
             console.log("department added to database");
-        });
+        }
+    );
+    
 }
-function addRoleData(title, rSalary) {  //add role
+function addRoleData(title, salary) {  //add role      BROKEN!!!
     // console.log(title);
     // console.log(rSalary); //these show up
     //code just breaks... exits app...
-    connection.query(
+    
+
+    connection.query(   //query should not be grey... on any of these
         "INSERT INTO job_role SET ?",
         {
-            name: title,
-            salary: rSalary
+            title: title,  //fix me once done testing
+            salary: salary
         },
         function (err, res) {
             if (err) throw err;
-            console.table(res);
-            console.log("test");
-        });
+            // console.table(res);
+            console.log("Added Role");
+        }
+    );
+
 }
 function viewData(table, column, inputId) {
     if (inputId == "0") {
@@ -413,7 +422,7 @@ function deleteData(table, id) {
 //view budget (of a specific department- option for total/all)
 
 function mainMenu() {
-    console.log("Welcome to the Open Employee Management Application.\n Main Menu");
+    console.log("\nWelcome to the Open Employee Management Application.\n Main Menu");
     inquirer.prompt(questions).then(function (answers) {
         //ADD
         if (answers.action === "Add") {
@@ -423,8 +432,10 @@ function mainMenu() {
             } else if (answers.add === "Department") {
                 addDeptData(answers.addDeptName, answers.addDeptId);
             } else if (answers.add === "Role") {
-                addRoleData(answers.addRoleTitle, answers.addRoleSalary);
+                addRoleData(answers.addRoleTitle, parseInt(answers.addRoleSalary));
+                // console.log(parseInt(answers.addRoleSalary));
             }
+            
             mainMenu();
         }
         //VIEW  pass in table, column, inputId
@@ -529,5 +540,6 @@ mainMenu();
 
 //maybe I should make it so that non number ids or some such will bring up entire table instead of id = 0 being show table...
 //id = all
-//might try changing role  to job_role... see if that helps... but only after I fix department adding function
+//add role function is broken. Will not add anythign to database...
 //dynamic column names might be breaking the mysql code that returns the result... may need ot manually write out what is updated/added
+//console logging or console tabling my "res" from the add queries are only giving me back the fields field, which is supposed to be optional

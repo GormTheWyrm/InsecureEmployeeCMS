@@ -40,3 +40,6 @@ VALUES ("John", "Middle", 1, 1);
 -- 
 insert into job_role (title, salary)
 VALUES ("CEO", 102);
+-- 
+insert into department (name, department_id)
+VALUES ("Testing", 102);
