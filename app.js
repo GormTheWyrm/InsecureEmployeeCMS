@@ -365,7 +365,7 @@ function viewDepartmentData(inputId) {
         //will need to be a join
     }
     else {      //broken for all but employees... why?
-        connection.query("SELECT * FROM department WHERE id = ?", [inputId], function (err, res) {
+        connection.query("SELECT * FROM department WHERE ?", [{id: inputId}], function (err, res) {
             if (err) throw err;
             console.table(res);
         });
@@ -382,7 +382,7 @@ function viewRoleData(inputId) {
         //will need to be a join
     }
     else {
-        connection.query(`SELECT * FROM job_role WHERE id = ?`, [inputId], function (err, res) {
+        connection.query(`SELECT * FROM job_role WHERE ?`, [{id: inputId}], function (err, res) {
             if (err) throw err;
             console.table(res);
         });
@@ -399,7 +399,7 @@ function viewEmployeeData(inputId) {
         //will need to be a join
     }
     else {
-        connection.query("SELECT * FROM employee WHERE id = ?", [inputId], function (err, res) {
+        connection.query("SELECT * FROM employee WHERE ?", [{id: inputId}], function (err, res) {
             if (err) throw err;
             console.table(res);
         });
@@ -425,7 +425,7 @@ function updateEmployee(first, last, role, manager, searchId) {
         ],
         function (err, res) {
             if (err) throw err;
-            console.log(res.affectedRows + " changed");
+            console.log(res.affectedRows + " records changed");
         }
     )
 }
@@ -446,7 +446,7 @@ function updateDepartment(name, deptId, searchId) {
         ],
         function (err, res) {
             if (err) throw err;
-            console.log(res.affectedRows + " changed");
+            console.log(res.affectedRows + " records changed");
         }
     );
 }
@@ -466,29 +466,56 @@ function updateRole(title, salary, searchId) {
         ],
         function (err, res) {
             if (err) throw err;
-            console.log(res.affectedRows + " changed");
+            console.log(res.affectedRows + " records changed");
         }
     );
 }
 
 
 
+function deleteEmployee(searchId){
+    //DELETE FROM ? WHERE id = ?
+    connection.query(
+        //sql
+        "DELETE FROM employee WHERE ?",
+        [{id: searchId}],
 
-
-
-
-function deleteData(table, id) {
-    //not implemented
+        function (err, res) {
+            if (err) throw err;
+            console.log(res.affectedRows + " records changed");
+        }
+    )
 }
-//....if id = 0; select * ! (get all options!)
+function deleteDepartment(searchId){
+    connection.query(
+        //sql
+        "DELETE FROM department WHERE ?",
+        [{id: searchId}],
 
-//update employee information
+        function (err, res) {
+            if (err) throw err;
+            console.log(res.affectedRows + " records changed");
+        }
+    )
+}
+function deleteRole(searchId){
+    connection.query(
+        //sql
+        "DELETE FROM role WHERE ?",
+        [{id: searchId}],
 
-//update manager...
+        function (err, res) {
+            if (err) throw err;
+            console.log(res.affectedRows + " records changed");
+        }
+    )
+}
+
+
+
+
 //view employee by manager
-//delete role
-//delete employee
-//delete department
+
 //view budget (of a specific department- option for total/all)
 
 function mainMenu() {
@@ -525,10 +552,9 @@ function mainMenu() {
                 //searched by employee's id (just called id)
             } else if (answers.view === "Department") {
                 viewDepartmentData(viewId);
-                //Im passing in Dept ID
+                // searched by 
             } else if (answers.view === "Role") {
                 viewRoleData(viewId);
-                //I'm passing in role ID
             } else if (answers.view === "Budget") {
                 //viewBudget();
                 // not implemented
@@ -547,15 +573,18 @@ function mainMenu() {
             } else if (answers.update === "Role") {
                 updateRole(answers.updateRoleTitle, parseFloat(answers.updateRoleSalary), parseInt(answers.updateId));
             }
-            console.log("you want to Update...");
             mainMenu();
             // });
         }
-        //DELETE        not yet implemented
+        //DELETE        not yet implemented - deleteId
         else if (answers.action === "Delete") {
-
-
-            console.log("you want to delete...");
+            if (answers.delete === "Employee"){
+                deleteEmployee(parseInt(answers.deleteId.trim()));
+            } else if (answers.delete === "Department"){
+                deleteDepartment(parseInt(answers.deleteId.trim()));
+            }else if (answers.delete === "Role"){
+                deleteRole(parseInt(answers.deleteId.trim()));
+            }
             mainMenu();
 
         }
