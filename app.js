@@ -183,7 +183,7 @@ questions = [
         //this runs for any update!
         type: "input",
         name: "updateId",
-        message: "Enter the ID for the object you want to update. An ID of 0 will cacel the operation.",
+        message: "Enter the ID for the object you want to update. An ID of 0 will cancel the operation.",
         when: function (answers) {
             return answers.action === "Update";
         }
@@ -326,34 +326,56 @@ questions = [
 
 /* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
 // FUNCTIONS    
-function addEmployeeData(first, last, role, manager) {
-    // console.log(first);
-        connection.query(
+function addEmployeeData(first, last, role, manager) {  //these are undefined again... why?
+    console.log("***" + first);
+    //is now adding employees to database- but not displaying them to user
+    connection.query(
         "INSERT INTO employee SET ?",
-    {
-        first_name: first,
-        last_name: last,
-        role_id: role,
-        manager_id: manager
-    },
-    function(err, res) {
-        if (err) throw err;
-        console.table(res);
-        //need to update product? code I stole this from had an update function- icecream crud
-    });
-    
+        {
+            first_name: first,
+            last_name: last,
+            role_id: role,
+            manager_id: manager
+        },
+        function (err, res) {
+            if (err) throw err;
+            // console.log(res + "added to database");
+            console.log("employee added to database");
 
-    //insert into employee (first_name, last_name, role_id, manager_id)
-
+        });
 }
-function addDeptData(name, deptId) {
-
+function addDeptData(dName, deptId) {   //add dept
+    connection.query(
+        "INSERT INTO department SET ?",
+        {
+            name: dName,
+            department_id: deptId
+        },
+        function (err, res) {
+            if (err) throw err;
+            // console.table(res); //sql is working, console.table is not
+            // console.log(res);
+            console.log("department added to database");
+        });
 }
-function addRoleData(title, salary) {
-
+function addRoleData(title, rSalary) {  //add role
+    // console.log(title);
+    // console.log(rSalary); //these show up
+    //code just breaks... exits app...
+    connection.query(
+        "INSERT INTO job_role SET ?",
+        {
+            name: title,
+            salary: rSalary
+        },
+        function (err, res) {
+            if (err) throw err;
+            console.table(res);
+            console.log("test");
+        });
 }
 function viewData(table, column, inputId) {
-    if (inputId == "0") { 
+    if (inputId == "0") {
         connection.query(`SELECT * FROM ${table}`, function (err, res) {
             if (err) throw err;
             console.table(res);
@@ -377,7 +399,7 @@ function updateData(table, Column, id, inputData) {
     console.log(`table ${table} Column ${Column}, inputData ${inputData}`);
 }
 function deleteData(table, id) {
-
+    //not implemented
 }
 //....if id = 0; select * ! (get all options!)
 
@@ -393,22 +415,16 @@ function deleteData(table, id) {
 function mainMenu() {
     console.log("Welcome to the Open Employee Management Application.\n Main Menu");
     inquirer.prompt(questions).then(function (answers) {
-        // console.log(answers);
         //ADD
         if (answers.action === "Add") {
-            //nested if figures out which function to call
-            //pass in parameters from here
-            //write function above
-
+            // console.log("===" + answers);
             if (answers.add === "Employee") {
-                addEmployeeData(answers.addEmployeeFirst, answers.addEmployeeLast, answers.addEmployeeRole, answers.addEmployeeManager);
-            } else if (answers.add = "Department") {
-                //addDeptData();
-                //need to add questions
-            } else if (answers.add = "Role") {
-                //addRoleData();
-                //need to add questions
-            }            
+                addEmployeeData(answers.addFirstName, answers.addLastName, answers.addRole, answers.addManager);
+            } else if (answers.add === "Department") {
+                addDeptData(answers.addDeptName, answers.addDeptId);
+            } else if (answers.add === "Role") {
+                addRoleData(answers.addRoleTitle, answers.addRoleSalary);
+            }
             mainMenu();
         }
         //VIEW  pass in table, column, inputId
@@ -416,13 +432,14 @@ function mainMenu() {
         else if (answers.action === "View") {
             if (answers.view === "Employee") {
                 viewData("employee", "id", answers.viewId);
-            } else if (answers.view = "Department") {
+                //searched by employee's id (just called id)
+            } else if (answers.view === "Department") {
                 viewData("department", "department_id", answers.viewId);
                 //Im passing in Dept ID
-            } else if (answers.view = "Role") {
-                viewData("role", "role_id", answers.viewId);
+            } else if (answers.view === "Role") {
+                viewData("job_role", "role_id", answers.viewId);
                 //I'm passing in role ID
-            } else if (answers.view = "Budget") {
+            } else if (answers.view === "Budget") {
                 //viewBudget();
             }
             mainMenu();
@@ -433,7 +450,6 @@ function mainMenu() {
                 for (i = 0; i < answers.employeeChoice.length; i++) {
                     if (answers.employeeChoice[i] === "First Name") {
                         updateData("employee", "first_name", answers.updateId, answers.updateEmployeeFirst);
-                        //current bug; first name caught even if nothing entered
                     } else if (answers.employeeChoice[i] === "Last Name") {
                         updateData("employee", "last_name", answers.updateId, answers.updateEmployeeLast);
                     } else if (answers.employeeChoice[i] === "Role") {
@@ -473,7 +489,7 @@ function mainMenu() {
             mainMenu();
             // });
         }
-        //DELETE
+        //DELETE        not yet implemented
         else if (answers.action === "Delete") {
 
 
@@ -511,4 +527,7 @@ mainMenu();
 //will need to make view into a join function...
 //will want to xx.trim() some values...
 
-//my answers.updateEmployeeFirst are showing [object object] instead of a string... but they otherwise work?
+//maybe I should make it so that non number ids or some such will bring up entire table instead of id = 0 being show table...
+//id = all
+//might try changing role  to job_role... see if that helps... but only after I fix department adding function
+//dynamic column names might be breaking the mysql code that returns the result... may need ot manually write out what is updated/added
