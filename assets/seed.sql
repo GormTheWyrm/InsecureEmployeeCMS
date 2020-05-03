@@ -1,5 +1,5 @@
 
-DROP DATABASE IF EXISTS open_employee_db;
+-- DROP DATABASE IF EXISTS open_employee_db;
 CREATE DATABASE open_employee_db;
 
 USE open_employee_db;

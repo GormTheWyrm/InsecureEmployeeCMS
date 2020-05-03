@@ -1,44 +1,35 @@
-//maybe this should be a json file that passes in questions... or a class?
+
 //change name to "Open Employee CMS"
 const fs = require("fs");
 const inquirer = require("inquirer");
 const mysql = require("mysql");
 const cTable = require("console.table");
-/*
-console.table([
-  {
-    name: 'foo',
-    age: 10
-  }, {
-    name: 'bar',
-    age: 20
-  }
-]);
 
-// prints
-name  age
-----  ---
-foo   10
-bar   20
-*/
-//console tabel?
-// let questions = require("./assets/questions.js");
-//this might not work...
+let connection;
+if (process.env.JAWSDB_URL) {
+    connection = mysql.createConnection(process.env.JAWSDB_URL);
+} else {
+    connection = mysql.createConnection({
 
-const connection = mysql.createConnection({
-    host: "localhost",
+        host: "localhost",
 
-    // Your port; if not 3306
-    port: 3306,
+        // Your port; if not 3306
+        port: 3306,
+    
+        // Your username
+        user: "root",
+    
+        // Your password
+        password: "123",
+        //your database
+        database: "open_employee_db"
 
-    // Your username
-    user: "root",
+    });
 
-    // Your password
-    password: "123",
-    //your database
-    database: "open_employee_db"
-});
+
+   
+}
+    
 
 
 
