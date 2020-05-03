@@ -183,29 +183,27 @@ questions = [
         //this runs for any update!
         type: "input",
         name: "updateId",
-        message: "Enter the ID for the object you want to update. An ID of 0 will cancel the operation.",
+        message: "Enter the ID for the object you want to update",
         when: function (answers) {
             return answers.action === "Update";
         }
     },
     //EMPLOYEE!
-    {
-        type: "checkbox",
-        message: "What aspects of your employee do you want to change?",
-        name: "employeeChoice",
-        choices: [{ name: "First Name" }, { name: "Last Name" }, { name: "Role" }, { name: "Manager" }],
-        when: function (answers) {
-            return answers.update === "Employee";
-        }
-    },
+    // {
+    //     type: "checkbox",
+    //     message: "What aspects of your employee do you want to change?",
+    //     name: "employeeChoice",
+    //     choices: [{ name: "First Name" }, { name: "Last Name" }, { name: "Role" }, { name: "Manager" }],
+    //     when: function (answers) {
+    //         return answers.update === "Employee";
+    //     }
+    // },
     {
         type: "input",
         name: "updateEmployeeFirst",
         message: "Enter a new First Name for this employee",
         when: function (answers) {
-            if (answers.action === "Update" && answers.update === "Employee") {
-                return answers.employeeChoice.includes("First Name");
-            } else { return false; }
+            if (answers.action === "Update" && answers.update === "Employee") { return true }
         }
     },
     {
@@ -213,9 +211,7 @@ questions = [
         name: "updateEmployeeLast",
         message: "Enter a new Last Name for this employee",
         when: function (answers) {
-            if (answers.action === "Update" && answers.update === "Employee") {
-                return answers.employeeChoice.includes("Last Name");
-            } else { return false; }
+            if (answers.action === "Update" && answers.update === "Employee") { return true }
         }
     },
     {
@@ -224,9 +220,7 @@ questions = [
         message: "Enter a new Role ID for this employee",
         //would be great to have search for names functionality
         when: function (answers) {
-            if (answers.action === "Update" && answers.update === "Employee") {
-                return answers.employeeChoice.includes("Role");
-            } else { return false; }
+            if (answers.action === "Update" && answers.update === "Employee") { return true }
         }
     },
     {
@@ -234,32 +228,28 @@ questions = [
         name: "updateEmployeeManager",
         message: "Enter a new Manager ID for this employee",
         when: function (answers) {
-            if (answers.action === "Update" && answers.update === "Employee") {
-                return answers.employeeChoice.includes("Manager");
-            } else { return false; }
+            if (answers.action === "Update" && answers.update === "Employee") { return true }
         }
     },
     //  NEED ADD DEPT AND ADD ROLE!
 
 
     //update department
-    {
-        type: "checkbox",
-        name: "deptChoice",
-        message: "What aspects of your Department do you want to change?",
-        choices: [{ name: "Dept Name" }, { name: "Dept ID" }],
-        when: function (answers) {
-            return answers.update === "Department";
-        }
-    },
+    // {
+    //     type: "checkbox",
+    //     name: "deptChoice",
+    //     message: "What aspects of your Department do you want to change?",
+    //     choices: [{ name: "Dept Name" }, { name: "Dept ID" }],
+    //     when: function (answers) {
+    //         return answers.update === "Department";
+    //     }
+    // },
     {
         type: "input",
         name: "updateDeptId",
         message: "Enter a new Dept ID for this department",
         when: function (answers) {
-            if (answers.action === "Update" && answers.update === "Department") {
-                return answers.deptChoice.includes("Dept ID");
-            } else { return false; }
+            if (answers.action === "Update" && answers.update === "Department") { return true }
         }
     },
     {
@@ -267,29 +257,25 @@ questions = [
         name: "updateDeptName",
         message: "Enter a new Dept Name for this Department",
         when: function (answers) {
-            if (answers.action === "Update" && answers.update === "Department") {
-                return answers.deptChoice.includes("Dept Name");
-            } else { return false; }
+            if (answers.action === "Update" && answers.update === "Department") { return true }
         }
     },
     //UPDATE ROLE
-    {
-        type: "checkbox",
-        name: "roleChoice",
-        message: "What aspects of your Role do you want to change?",
-        choices: [{ name: "Title" }, { name: "Salary" }],
-        when: function (answers) {
-            return answers.update === "Role";
-        }
-    },
+    // {
+    //     type: "checkbox",
+    //     name: "roleChoice",
+    //     message: "What aspects of your Role do you want to change?",
+    //     choices: [{ name: "Title" }, { name: "Salary" }],
+    //     when: function (answers) {
+    //         return answers.update === "Role";
+    //     }
+    // },
     {
         type: "input",
         name: "updateRoleTitle",
         message: "Enter a new Title for this Role",
         when: function (answers) {
-            if (answers.action === "Update" && answers.update === "Role") {
-                return answers.roleChoice.includes("Title");
-            } else { return false; }
+            if (answers.action === "Update" && answers.update === "Role") { return true };
         }
     },
     {
@@ -297,9 +283,7 @@ questions = [
         name: "updateRoleSalary",
         message: "Enter a new Salary for this Role",
         when: function (answers) {
-            if (answers.action === "Update" && answers.update === "Role") {
-                return answers.roleChoice.includes("Salary");
-            } else { return false; }
+            if (answers.action === "Update" && answers.update === "Role") { return true };
         }
     },
 
@@ -308,7 +292,7 @@ questions = [
     {
         type: "input",
         name: "deleteId",
-        message: "Enter the ID for the object you want to delete. An ID of 0 will cancel the operation.",
+        message: "Enter the ID for the object you want to delete",
         //could update this to search by names but ID is easier for now
         //should search by employee id, department id, role
         //should department searc hby department id or plain id?
@@ -326,7 +310,7 @@ questions = [
 
 /* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
 // FUNCTIONS    
-function addEmployeeData(first, last, role, manager) {  
+function addEmployeeData(first, last, role, manager) {
     connection.query(
         "INSERT INTO employee SET ?",
         {
@@ -337,13 +321,10 @@ function addEmployeeData(first, last, role, manager) {
         },
         function (err, res) {
             if (err) throw err;
-            // console.table(res);
-            // console.log(res + "added to database");
             console.log("employee added to database");
 
         }
     );
-    // console.table(query.sql);
 }
 function addDeptData(dName, deptId) {   //add dept
     connection.query(
@@ -354,8 +335,6 @@ function addDeptData(dName, deptId) {   //add dept
         },
         function (err, res) {
             if (err) throw err;
-            // console.table(res); //sql is working, console.table is not
-            // console.log(res);
             console.log("department added to database");
         }
     );
@@ -386,7 +365,7 @@ function viewDepartmentData(inputId) {
         //will need to be a join
     }
     else {      //broken for all but employees... why?
-            connection.query("SELECT * FROM department WHERE id = ?", [inputId], function (err, res) {
+        connection.query("SELECT * FROM department WHERE id = ?", [inputId], function (err, res) {
             if (err) throw err;
             console.table(res);
         });
@@ -402,8 +381,8 @@ function viewRoleData(inputId) {
         });
         //will need to be a join
     }
-    else {      
-            connection.query(`SELECT * FROM job_role WHERE id = ?`, [inputId], function (err, res) {
+    else {
+        connection.query(`SELECT * FROM job_role WHERE id = ?`, [inputId], function (err, res) {
             if (err) throw err;
             console.table(res);
         });
@@ -419,8 +398,8 @@ function viewEmployeeData(inputId) {
         });
         //will need to be a join
     }
-    else {   
-            connection.query("SELECT * FROM employee WHERE id = ?", [inputId], function (err, res) {
+    else {
+        connection.query("SELECT * FROM employee WHERE id = ?", [inputId], function (err, res) {
             if (err) throw err;
             console.table(res);
         });
@@ -428,51 +407,76 @@ function viewEmployeeData(inputId) {
     }
 }
 //  UPDATE
-function updateData(table, column, idColumn, id, inputData) {       //BROKEN
-    //              str     str     str        int  variable
-    //inputData seems to be issue... all other variables worked!
-    //...first_name is also a problem?  was able to set last name
-    //with id hardcoded...
-    //.....department name changed- but not id
-    //.....all employee fields change- but if first name is run, app exits before rest run
-    //..... role ran perfectly fine
-    //idColumn is the search parameter
-    console.log(typeof(table), typeof(column), typeof(idColumn), typeof(id), typeof(inputData));
-    //ran employee-firstname and got all strings!
-    //
+function updateEmployee(first, last, role, manager, searchId) {
     connection.query(
-        // `UPDATE ${table} SET ${column} = ${inputData} WHERE ${idColumn} = ${id};` 
-        `UPDATE ${table} SET ${column} = ? WHERE id = ${id};`
-        , [
+        //sql
+        "UPDATE employee SET ? WHERE ?"
+        ,
+        [
             {
-                inputData
+                first_name: first,
+                last_name: last,
+                role_id: role,
+                manager_id: manager
+            },
+            {
+                id: searchId
             }
-        ]
-        // `UPDATE employee SET first_name = "kevin" WHERE id = 1;`//works
-        // `UPDATE ${table} SET ${column} WHERE ?`,
-        // `UPDATE ${table} SET ${column} WHERE ?`
-        // [{},{}]
-        , function (err, res) {
+        ],
+        function (err, res) {
             if (err) throw err;
-            console.log(column + " changed");
-            //tested- did not call above consol log
-            //called it when I wrote it out...hardcoded...
-            //and I think it console.logs the info correctly...
+            console.log(res.affectedRows + " changed");
+        }
+    )
+}
+function updateDepartment(name, deptId, searchId) {
+    connection.query(
+        //sql
+        "UPDATE department SET ? WHERE ?"
+        ,
+        [
+            {
+                name: name,
+                department_id: deptId
+            },
+            {
+                id: searchId
+                //maybe should change this to depaartment_id...?
+            }
+        ],
+        function (err, res) {
+            if (err) throw err;
+            console.log(res.affectedRows + " changed");
         }
     );
-
-    /* need to try this instead...
-    con.connect(function(err) {
-      if (err) throw err;
-      var sql = "UPDATE customers SET address = 'Canyon 123' WHERE address = 'Valley 345'";
-      con.query(sql, function (err, result) {
-        if (err) throw err;
-        console.log(result.affectedRows + " record(s) updated");
-      });
-    });
-    */
-
 }
+function updateRole(title, salary, searchId) {
+    connection.query(
+        //sql
+        "UPDATE job_role SET ? WHERE ?"
+        ,
+        [
+            {
+                title: title,
+                salary: salary
+            },
+            {
+                id: searchId
+            }
+        ],
+        function (err, res) {
+            if (err) throw err;
+            console.log(res.affectedRows + " changed");
+        }
+    );
+}
+
+
+
+
+
+
+
 function deleteData(table, id) {
     //not implemented
 }
@@ -498,7 +502,7 @@ function mainMenu() {
                 const myLast = answers.addLastName.trim();
                 const myRole = answers.addRole.trim();
                 const myManager = answers.addManager.trim();
-                addEmployeeData(myFirst, myLast, myRole,myManager);
+                addEmployeeData(myFirst, myLast, myRole, myManager);
             } else if (answers.add === "Department") {
                 const myName = answers.addDeptName.trim();
                 const myDept = answers.addDeptId.trim();
@@ -534,41 +538,14 @@ function mainMenu() {
         //UPDATE   (table, column, idColumn, id, inputData)
         else if (answers.action === "Update") {
             if (answers.update === "Employee") {
-                console.log("trying to update employee");
-                for (i = 0; i < answers.employeeChoice.length; i++) {
-                    if (answers.employeeChoice[i] === "First Name") {
-                        updateData("employee", "first_name", "id", ParseInt(answers.updateId), answers.updateEmployeeFirst);
-                    } else if (answers.employeeChoice[i] === "Last Name") {
-                        updateData("employee", "last_name", "id", answers.updateId, answers.updateEmployeeLast);
-                    } else if (answers.employeeChoice[i] === "Role") {
-                        updateData("employee", "role_id", "id", answers.updateId, parseInt(answers.updateEmployeeRole));
-                    } else if (answers.employeeChoice[i] === "Manager") {
-                        updateData("employee", "manager_id", "id", answers.updateId, parseInt(answers.updateEmployeeManager));
-                    }
-                }
+
+                updateEmployee(answers.updateEmployeeFirst, answers.updateEmployeeLast, parseInt(answers.updateEmployeeRole), parseInt(answers.updateEmployeeManager), parseInt(answers.updateId));
+
             } else if (answers.update === "Department") {
-                // do I want user to search by id or dept id? by dept id is easier for user... and id is easier for me
-                //not going to let them update by dept id because ... they would simply have to update name before id...
-                //something to think about...
-                for (i = 0; i < answers.deptChoice.length; i++) {
-                    if (answers.deptChoice[i] === "Dept Name") {
-                        updateData("department", "name", "id", parseInt(answers.updateId), answers.updateDeptName);
-                    }
-                    else if (answers.deptChoice[i] === "Dept ID") {
-                        updateData("department", "dept_id", "id", parseInt(answers.updateId), answers.updateDeptId);
-                    } else { console.log("error"); }
-                }
-                //this seems to be sending the name after the dept_id...
+                updateDepartment(answers.updateDeptName, parseInt(answers.updateDeptId), parseInt(answers.updateId));
+
             } else if (answers.update === "Role") {
-                //
-                for (i = 0; i < answers.roleChoice.length; i++) {
-                    if (answers.roleChoice[i] === "Title") {
-                        updateData("job_role", "title", "role_id", parseInt(answers.updateId), answers.updateRoleTitle);
-                        //current bug; first name caught even if nothing entered
-                    } else if (answers.roleChoice[i] === "Salary") {
-                        updateData("job_role", "salary", "role_id", parseInt(answers.updateId), parseFloat(answers.updateRoleSalary));
-                    }
-                }
+                updateRole(answers.updateRoleTitle, parseFloat(answers.updateRoleSalary), parseInt(answers.updateId));
             }
             console.log("you want to Update...");
             mainMenu();
