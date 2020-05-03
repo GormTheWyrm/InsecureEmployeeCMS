@@ -43,3 +43,5 @@ VALUES ("CEO", 102);
 -- 
 insert into department (name, department_id)
 VALUES ("Testing", 102);
+-- ~~~~~~~~~~~~~~~~~~~
+UPDATE employee SET first_name = "Jim" WHERE id = 1;

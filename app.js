@@ -348,7 +348,7 @@ function addEmployeeData(first, last, role, manager) {  //these are undefined ag
     // console.table(query.sql);
 }
 function addDeptData(dName, deptId) {   //add dept
-     connection.query(
+    connection.query(
         "INSERT INTO department SET ?",
         {
             name: dName,
@@ -361,14 +361,9 @@ function addDeptData(dName, deptId) {   //add dept
             console.log("department added to database");
         }
     );
-    
-}
-function addRoleData(title, salary) {  //add role      BROKEN!!!
-    // console.log(title);
-    // console.log(rSalary); //these show up
-    //code just breaks... exits app...
-    
 
+}
+function addRoleData(title, salary) {  //add role     
     connection.query(   //query should not be grey... on any of these
         "INSERT INTO job_role SET ?",
         {
@@ -399,13 +394,43 @@ function viewData(table, column, inputId) {
         //probably needs to be a join...
     }
 }
-function updateData(table, Column, id, inputData) {
-    // update function could need 3 parameters; table and data being changed, and the actual data!
-    // collumn is determined by ...choice
-    //...could have a choice or list. Is there a way to perform this function multiple times? YES!
-    //this function will be called under each if statement that matches- meaning user can choose what to change in prompt!
-    //...just need to figure out how to get data fromchoice... easy!
-    console.log(`table ${table} Column ${Column}, inputData ${inputData}`);
+function updateData(table, column, idColumn, id, inputData) {       //BROKEN
+    //inputData seems to be issue... all other variables worked!
+    //...first_name is also a problem?  was able to set last name
+    //with id hardcoded...
+    //.....department name changed- but not id
+    //.....all employee fields change- but if first name is run, app exits before rest run
+    //..... role ran perfectly fine
+    //idColumn is the search parameter
+    console.log(table, column, idColumn, id, inputData);
+    connection.query(
+        // `UPDATE ${table} SET ${column} = ${inputData} WHERE ${idColumn} = ${id};` 
+        `UPDATE ${table} SET ${column} = ? WHERE id = ${id};`
+        , [inputData]
+        // `UPDATE employee SET first_name = "kevin" WHERE id = 1;`//works
+        // `UPDATE ${table} SET ${column} WHERE ?`,
+        // `UPDATE ${table} SET ${column} WHERE ?`
+        // [{},{}]
+        , function (err, res) {
+            if (err) throw err;
+            console.log(column + " changed");
+            //tested- did not call above consol log
+            //called it when I wrote it out...hardcoded...
+            //and I think it console.logs the info correctly...
+        }
+    );
+
+/* need to try this instead...
+con.connect(function(err) {
+  if (err) throw err;
+  var sql = "UPDATE customers SET address = 'Canyon 123' WHERE address = 'Valley 345'";
+  con.query(sql, function (err, result) {
+    if (err) throw err;
+    console.log(result.affectedRows + " record(s) updated");
+  });
+});
+*/
+
 }
 function deleteData(table, id) {
     //not implemented
@@ -432,10 +457,10 @@ function mainMenu() {
             } else if (answers.add === "Department") {
                 addDeptData(answers.addDeptName, answers.addDeptId);
             } else if (answers.add === "Role") {
-                addRoleData(answers.addRoleTitle, parseInt(answers.addRoleSalary));
-                // console.log(parseInt(answers.addRoleSalary));
+                addRoleData(answers.addRoleTitle, parseFloat(answers.addRoleSalary));
+                // console.log(parseFloat(answers.addRoleSalary));
             }
-            
+
             mainMenu();
         }
         //VIEW  pass in table, column, inputId
@@ -455,31 +480,33 @@ function mainMenu() {
             }
             mainMenu();
         }
-        //UPDATE    updateData(table, Column, inputData)        employeeChoice, updateemployeeFirst...last,role,manager
+        //UPDATE   (table, column, idColumn, id, inputData)
         else if (answers.action === "Update") {
             if (answers.update === "Employee") {
+                console.log("trying to update employee");
                 for (i = 0; i < answers.employeeChoice.length; i++) {
                     if (answers.employeeChoice[i] === "First Name") {
-                        updateData("employee", "first_name", answers.updateId, answers.updateEmployeeFirst);
+                        updateData("employee", "first_name", "id", answers.updateId, answers.updateEmployeeFirst);
+                        console.log("trying to update employee's first name"+ updateEmployeeFirst);
                     } else if (answers.employeeChoice[i] === "Last Name") {
-                        updateData("employee", "last_name", answers.updateId, answers.updateEmployeeLast);
+                        updateData("employee", "last_name", "id", answers.updateId, answers.updateEmployeeLast);
                     } else if (answers.employeeChoice[i] === "Role") {
-                        updateData("employee", "role_id", answers.updateId, answers.updateEmployeeRole);
+                        updateData("employee", "role_id", "id", answers.updateId, parseInt(answers.updateEmployeeRole));
                     } else if (answers.employeeChoice[i] === "Manager") {
-                        updateData("employee", "manager_id", answers.updateId, answers.updateEmployeeManager);
+                        updateData("employee", "manager_id", "id", answers.updateId, answers.updateEmployeeManager);
                     }
                 }
-
             } else if (answers.update === "Department") {
-                //
+                // do I want user to search by id or dept id? by dept id is easier for user... and id is easier for me
+                //not going to let them update by dept id because ... they would simply have to update name before id...
+                //something to think about...
                 for (i = 0; i < answers.deptChoice.length; i++) {
-
                     if (answers.deptChoice[i] === "Dept ID") {
-                        updateData("department", "dept_id", answers.updateId, answers.updateDeptId);
+                        updateData("department", "dept_id", "id", parseInt(answers.updateId), answers.updateDeptId);
                     }
                     else
                         if (answers.deptChoice[i] === "Dept Name") {
-                            updateData("department", "name", answers.updateId, answers.updateDeptName);
+                            updateData("department", "name", "id", parseInt(answers.updateId), answers.updateDeptName);
                             //current bug; first name caught even if nothing entered
                         }
                         else { console.log("error"); }
@@ -489,10 +516,10 @@ function mainMenu() {
                 //
                 for (i = 0; i < answers.roleChoice.length; i++) {
                     if (answers.roleChoice[i] === "Title") {
-                        updateData("role", "title", answers.updateId, answers.updateRoleTitle);
+                        updateData("job_role", "title", "role_id", parseInt(answers.updateId), answers.updateRoleTitle);
                         //current bug; first name caught even if nothing entered
                     } else if (answers.roleChoice[i] === "Salary") {
-                        updateData("role", "salary", answers.updateId, answers.updateRoleSalary);
+                        updateData("job_role", "salary", "role_id", parseInt(answers.updateId), parseFloat(answers.updateRoleSalary));
                     }
                 }
             }
@@ -540,6 +567,6 @@ mainMenu();
 
 //maybe I should make it so that non number ids or some such will bring up entire table instead of id = 0 being show table...
 //id = all
-//add role function is broken. Will not add anythign to database...
+
 //dynamic column names might be breaking the mysql code that returns the result... may need ot manually write out what is updated/added
 //console logging or console tabling my "res" from the add queries are only giving me back the fields field, which is supposed to be optional
