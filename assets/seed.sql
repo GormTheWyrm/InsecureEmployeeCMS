@@ -1,3 +1,4 @@
+
 DROP DATABASE IF EXISTS open_employee_db;
 CREATE DATABASE open_employee_db;
 
@@ -26,13 +27,6 @@ role_id int(10),
 manager_id int (10) NULL,
 PRIMARY KEY (id)
 );
--- no dept id?
-
-SELECT * FROM department;
-SELECT * FROM employee;
-SELECT * FROM job_role;
--- "role" will cause errors in the future as it is likely to become a reserved keyword
--- therefore I changed it to job_role
 -- ~~~~~~~~~~~~~~~~~~~~~~~
 
 insert into employee (first_name, last_name, role_id, manager_id)
@@ -44,4 +38,3 @@ VALUES ("CEO", 102);
 insert into department (name, department_id)
 VALUES ("Testing", 102);
 -- ~~~~~~~~~~~~~~~~~~~
-UPDATE employee SET first_name = "Jim" WHERE id = 1;

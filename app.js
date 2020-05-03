@@ -326,9 +326,7 @@ questions = [
 
 /* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
 // FUNCTIONS    
-function addEmployeeData(first, last, role, manager) {  //these are undefined again... why?
-    // console.log("***" + first);
-    //is now adding employees to database- but not displaying them to user
+function addEmployeeData(first, last, role, manager) {  
     connection.query(
         "INSERT INTO employee SET ?",
         {
@@ -378,23 +376,60 @@ function addRoleData(title, salary) {  //add role
     );
 
 }
-function viewData(table, column, inputId) {
+// VIEW DEPT
+function viewDepartmentData(inputId) {
     if (inputId == "0") {
-        connection.query(`SELECT * FROM ${table}`, function (err, res) {
+        connection.query("SELECT * FROM department", function (err, res) {
             if (err) throw err;
             console.table(res);
         });
         //will need to be a join
     }
-    else {
-        connection.query(`SELECT * FROM ${table} WHERE ${column}=?`, [inputId], function (err, res) {
+    else {      //broken for all but employees... why?
+            connection.query("SELECT * FROM department WHERE id = ?", [inputId], function (err, res) {
             if (err) throw err;
             console.table(res);
         });
         //probably needs to be a join...
     }
 }
+// VIEW ROLE
+function viewRoleData(inputId) {
+    if (inputId == "0") {
+        connection.query(`SELECT * FROM job_role`, function (err, res) {
+            if (err) throw err;
+            console.table(res);
+        });
+        //will need to be a join
+    }
+    else {      
+            connection.query(`SELECT * FROM job_role WHERE id = ?`, [inputId], function (err, res) {
+            if (err) throw err;
+            console.table(res);
+        });
+        //probably needs to be a join...
+    }
+}
+// VIEW EMPLOYEE DATA
+function viewEmployeeData(inputId) {
+    if (inputId == "0") {
+        connection.query(`SELECT * FROM employee`, function (err, res) {
+            if (err) throw err;
+            console.table(res);
+        });
+        //will need to be a join
+    }
+    else {   
+            connection.query("SELECT * FROM employee WHERE id = ?", [inputId], function (err, res) {
+            if (err) throw err;
+            console.table(res);
+        });
+        //probably needs to be a join...
+    }
+}
+//  UPDATE
 function updateData(table, column, idColumn, id, inputData) {       //BROKEN
+    //              str     str     str        int  variable
     //inputData seems to be issue... all other variables worked!
     //...first_name is also a problem?  was able to set last name
     //with id hardcoded...
@@ -402,11 +437,17 @@ function updateData(table, column, idColumn, id, inputData) {       //BROKEN
     //.....all employee fields change- but if first name is run, app exits before rest run
     //..... role ran perfectly fine
     //idColumn is the search parameter
-    console.log(table, column, idColumn, id, inputData);
+    console.log(typeof(table), typeof(column), typeof(idColumn), typeof(id), typeof(inputData));
+    //ran employee-firstname and got all strings!
+    //
     connection.query(
         // `UPDATE ${table} SET ${column} = ${inputData} WHERE ${idColumn} = ${id};` 
         `UPDATE ${table} SET ${column} = ? WHERE id = ${id};`
-        , [inputData]
+        , [
+            {
+                inputData
+            }
+        ]
         // `UPDATE employee SET first_name = "kevin" WHERE id = 1;`//works
         // `UPDATE ${table} SET ${column} WHERE ?`,
         // `UPDATE ${table} SET ${column} WHERE ?`
@@ -420,16 +461,16 @@ function updateData(table, column, idColumn, id, inputData) {       //BROKEN
         }
     );
 
-/* need to try this instead...
-con.connect(function(err) {
-  if (err) throw err;
-  var sql = "UPDATE customers SET address = 'Canyon 123' WHERE address = 'Valley 345'";
-  con.query(sql, function (err, result) {
-    if (err) throw err;
-    console.log(result.affectedRows + " record(s) updated");
-  });
-});
-*/
+    /* need to try this instead...
+    con.connect(function(err) {
+      if (err) throw err;
+      var sql = "UPDATE customers SET address = 'Canyon 123' WHERE address = 'Valley 345'";
+      con.query(sql, function (err, result) {
+        if (err) throw err;
+        console.log(result.affectedRows + " record(s) updated");
+      });
+    });
+    */
 
 }
 function deleteData(table, id) {
@@ -453,30 +494,40 @@ function mainMenu() {
         if (answers.action === "Add") {
             // console.log("===" + answers);
             if (answers.add === "Employee") {
-                addEmployeeData(answers.addFirstName, answers.addLastName, answers.addRole, answers.addManager);
+                const myFirst = answers.addFirstName.trim();
+                const myLast = answers.addLastName.trim();
+                const myRole = answers.addRole.trim();
+                const myManager = answers.addManager.trim();
+                addEmployeeData(myFirst, myLast, myRole,myManager);
             } else if (answers.add === "Department") {
-                addDeptData(answers.addDeptName, answers.addDeptId);
+                const myName = answers.addDeptName.trim();
+                const myDept = answers.addDeptId.trim();
+                addDeptData(myName, myDept);
             } else if (answers.add === "Role") {
-                addRoleData(answers.addRoleTitle, parseFloat(answers.addRoleSalary));
-                // console.log(parseFloat(answers.addRoleSalary));
+                const myTitle = answers.addRoleTitle.trim();
+                const mySalary = parseFloat(answers.addRoleSalary.trim());
+                addRoleData(myTitle, mySalary);
             }
 
             mainMenu();
         }
-        //VIEW  pass in table, column, inputId
+        //VIEW  pass in table, column, inputId (assumes a number)
 
         else if (answers.action === "View") {
+            const viewId = answers.viewId.trim();
+            console.log(viewId);
             if (answers.view === "Employee") {
-                viewData("employee", "id", answers.viewId);
+                viewEmployeeData(viewId);
                 //searched by employee's id (just called id)
             } else if (answers.view === "Department") {
-                viewData("department", "department_id", answers.viewId);
+                viewDepartmentData(viewId);
                 //Im passing in Dept ID
             } else if (answers.view === "Role") {
-                viewData("job_role", "role_id", answers.viewId);
+                viewRoleData(viewId);
                 //I'm passing in role ID
             } else if (answers.view === "Budget") {
                 //viewBudget();
+                // not implemented
             }
             mainMenu();
         }
@@ -486,14 +537,13 @@ function mainMenu() {
                 console.log("trying to update employee");
                 for (i = 0; i < answers.employeeChoice.length; i++) {
                     if (answers.employeeChoice[i] === "First Name") {
-                        updateData("employee", "first_name", "id", answers.updateId, answers.updateEmployeeFirst);
-                        console.log("trying to update employee's first name"+ updateEmployeeFirst);
+                        updateData("employee", "first_name", "id", ParseInt(answers.updateId), answers.updateEmployeeFirst);
                     } else if (answers.employeeChoice[i] === "Last Name") {
                         updateData("employee", "last_name", "id", answers.updateId, answers.updateEmployeeLast);
                     } else if (answers.employeeChoice[i] === "Role") {
                         updateData("employee", "role_id", "id", answers.updateId, parseInt(answers.updateEmployeeRole));
                     } else if (answers.employeeChoice[i] === "Manager") {
-                        updateData("employee", "manager_id", "id", answers.updateId, answers.updateEmployeeManager);
+                        updateData("employee", "manager_id", "id", answers.updateId, parseInt(answers.updateEmployeeManager));
                     }
                 }
             } else if (answers.update === "Department") {
@@ -501,15 +551,12 @@ function mainMenu() {
                 //not going to let them update by dept id because ... they would simply have to update name before id...
                 //something to think about...
                 for (i = 0; i < answers.deptChoice.length; i++) {
-                    if (answers.deptChoice[i] === "Dept ID") {
-                        updateData("department", "dept_id", "id", parseInt(answers.updateId), answers.updateDeptId);
+                    if (answers.deptChoice[i] === "Dept Name") {
+                        updateData("department", "name", "id", parseInt(answers.updateId), answers.updateDeptName);
                     }
-                    else
-                        if (answers.deptChoice[i] === "Dept Name") {
-                            updateData("department", "name", "id", parseInt(answers.updateId), answers.updateDeptName);
-                            //current bug; first name caught even if nothing entered
-                        }
-                        else { console.log("error"); }
+                    else if (answers.deptChoice[i] === "Dept ID") {
+                        updateData("department", "dept_id", "id", parseInt(answers.updateId), answers.updateDeptId);
+                    } else { console.log("error"); }
                 }
                 //this seems to be sending the name after the dept_id...
             } else if (answers.update === "Role") {
@@ -551,7 +598,10 @@ function mainMenu() {
 /* **** Main App Here **** */
 mainMenu();
 
-
+//adding works for employee, department, role
+//view works for all for employee, department, role
+//not joined yet
+/* ~~~~~~~~ */
 
 
 
@@ -559,7 +609,7 @@ mainMenu();
 //move questions into a new file
 // write functions- and sql
 
-//add add
+
 //add update
 //add delete
 //will need to make view into a join function...
@@ -570,3 +620,8 @@ mainMenu();
 
 //dynamic column names might be breaking the mysql code that returns the result... may need ot manually write out what is updated/added
 //console logging or console tabling my "res" from the add queries are only giving me back the fields field, which is supposed to be optional
+//view dept and role is not returning individual results, only thr select all table
+
+
+//need to make app handle errors when people add departments with same dept numbers
+//and roles with same role id...
