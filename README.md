@@ -2,10 +2,21 @@
 Content Management System that allows a user to track employees salaries and group them by department. This program is not designed to contain sensitive data and as such does not have a Social Security number option.
 
 
+? Input a user story. Example; As a developer, I want an app to walk me through creating a readme.
+? Write a short description of your project.
+? What programs is your project dependent on? This application depends on the mysql, inquirer and console.table modules which can be downloaded on npm.     
+? What steps must be taken to install your program? open the folder in a terminal such as git bash and run
+? What steps should a user follow to use your program?
+? What steps should a user follow to test your program?
+? What license do you operate under?
+? Who are the primary authors of the project
+? list the major contributors, preferably by github username:
+? How could those who want to help contribute?
+? Display Github info under contacts? 
 
 
 
-
+it is weird that there is an in for  dept and a dept id, right?
 
 
 

@@ -360,7 +360,7 @@ function viewDepartmentData(inputId) {
         //will need to be a join
     }
     else {      //broken for all but employees... why?
-        connection.query("SELECT * FROM department WHERE ?", [{id: inputId}], function (err, res) {
+        connection.query("SELECT * FROM department WHERE ?", [{department_id: inputId}], function (err, res) {
             if (err) throw err;
             console.table(res);
         });
@@ -377,7 +377,7 @@ function viewRoleData(inputId) {
         //will need to be a join
     }
     else {
-        connection.query(`SELECT * FROM job_role WHERE ?`, [{id: inputId}], function (err, res) {
+        connection.query("SELECT * FROM job_role WHERE ?", [{id: inputId}], function (err, res) {
             if (err) throw err;
             console.table(res);
         });
@@ -435,7 +435,7 @@ function updateDepartment(name, deptId, searchId) {
                 department_id: deptId
             },
             {
-                id: searchId
+                department_id: searchId
                 //maybe should change this to depaartment_id...?
             }
         ],
@@ -456,7 +456,7 @@ function updateRole(title, salary, searchId) {
                 salary: salary
             },
             {
-                id: searchId
+                role_id: searchId
             }
         ],
         function (err, res) {
@@ -552,7 +552,7 @@ function mainMenu() {
                 viewRoleData(viewId);
             } else if (answers.view === "Budget") {
                 //viewBudget();
-                // not implemented
+                //console.log("Bugdet overview not yet implemented");
             }
             mainMenu();
         }
