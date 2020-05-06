@@ -149,14 +149,14 @@ questions = [
             return answers.add === "Department";
         }
     },
-    {
-        type: "input",
-        name: "addDeptId",
-        message: "Add Department ID of New Department",
-        when: function (answers) {
-            return answers.add === "Department";
-        }
-    },
+    // {
+    //     type: "input",
+    //     name: "addDeptId",
+    //     message: "Add Department ID of New Department",
+    //     when: function (answers) {
+    //         return answers.add === "Department";
+    //     }
+    // },
     //ADD FUNCTION INPUTS - Role
     {
         type: "input",
@@ -170,6 +170,14 @@ questions = [
         type: "input",
         name: "addRoleSalary",
         message: "Add a salary for this role (USD/hr)",
+        when: function (answers) {
+            return answers.add === "Role";
+        }
+    },
+    {
+        type: "input",
+        name: "addRoleDepartment",
+        message: "Add a department ID# for this role (should align with existing department",
         when: function (answers) {
             return answers.add === "Role";
         }
@@ -239,14 +247,14 @@ questions = [
     //         return answers.update === "Department";
     //     }
     // },
-    {
-        type: "input",
-        name: "updateDeptId",
-        message: "Enter a new Dept ID for this department",
-        when: function (answers) {
-            if (answers.action === "Update" && answers.update === "Department") { return true }
-        }
-    },
+    // {
+    //     type: "input",
+    //     name: "updateDeptId",
+    //     message: "Enter a new Dept ID for this department",
+    //     when: function (answers) {
+    //         if (answers.action === "Update" && answers.update === "Department") { return true }
+    //     }
+    // },
     {
         type: "input",
         name: "updateDeptName",
@@ -281,8 +289,14 @@ questions = [
             if (answers.action === "Update" && answers.update === "Role") { return true };
         }
     },
-
-
+    {
+        type: "input",
+        name: "updateRoleDepartment",
+        message: "Enter a new Department ID # for this Role",
+        when: function (answers) {
+            if (answers.action === "Update" && answers.update === "Role") { return true };
+        }
+    },
     //delete      
     {
         type: "input",
@@ -294,13 +308,8 @@ questions = [
         when: function (answers) {
             return answers.action === "Delete";
         }
-    }
-    //note that user chooses the action (delete) and the table in the first few questions
+    } //note that user chooses the action (delete) and the table in the first few questions
 ]
-
-
-
-
 
 
 /* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
@@ -326,7 +335,6 @@ function addDeptData(dName, deptId) {   //add dept
         "INSERT INTO department SET ?",
         {
             name: dName,
-            department_id: deptId
         },
         function (err, res) {
             if (err) throw err;
@@ -335,16 +343,16 @@ function addDeptData(dName, deptId) {   //add dept
     );
 
 }
-function addRoleData(title, salary) {  //add role     
-    connection.query(   //query should not be grey... on any of these
+function addRoleData(title, salary, myRoleDept) {  //add role     
+    connection.query( 
         "INSERT INTO job_role SET ?",
         {
-            title: title,  //fix me once done testing
-            salary: salary
+            title: title,  
+            salary: salary,
+            department_id: myRoleDept
         },
         function (err, res) {
             if (err) throw err;
-            // console.table(res);
             console.log("Added Role");
         }
     );
@@ -359,8 +367,8 @@ function viewDepartmentData(inputId) {
         });
         //will need to be a join
     }
-    else {      //broken for all but employees... why?
-        connection.query("SELECT * FROM department WHERE ?", [{department_id: inputId}], function (err, res) {
+    else { 
+        connection.query("SELECT * FROM department WHERE ?", [{id: inputId}], function (err, res) {
             if (err) throw err;
             console.table(res);
         });
@@ -424,7 +432,7 @@ function updateEmployee(first, last, role, manager, searchId) {
         }
     )
 }
-function updateDepartment(name, deptId, searchId) {
+function updateDepartment(name, searchId) {
     connection.query(
         //sql
         "UPDATE department SET ? WHERE ?"
@@ -432,10 +440,9 @@ function updateDepartment(name, deptId, searchId) {
         [
             {
                 name: name,
-                department_id: deptId
             },
             {
-                department_id: searchId
+                id: searchId
                 //maybe should change this to depaartment_id...?
             }
         ],
@@ -445,7 +452,7 @@ function updateDepartment(name, deptId, searchId) {
         }
     );
 }
-function updateRole(title, salary, searchId) {
+function updateRole(title, salary, myRoleDept, searchId) {      //will not update department_id = BROKEN
     connection.query(
         //sql
         "UPDATE job_role SET ? WHERE ?"
@@ -453,7 +460,8 @@ function updateRole(title, salary, searchId) {
         [
             {
                 title: title,
-                salary: salary
+                salary: salary,
+                department_id: myRoleDept
             },
             {
                 role_id: searchId
@@ -515,7 +523,7 @@ function deleteRole(searchId){
 
 function mainMenu() {
     console.log("\nWelcome to the Open Employee Management Application.\n Main Menu");
-    inquirer.prompt(questions).then(function (answers) {
+    inquirer.prompt(questions).then(function (answers) {    //this just started 
         //ADD
         if (answers.action === "Add") {
             // console.log("===" + answers);
@@ -527,12 +535,12 @@ function mainMenu() {
                 addEmployeeData(myFirst, myLast, myRole, myManager);
             } else if (answers.add === "Department") {
                 const myName = answers.addDeptName.trim();
-                const myDept = answers.addDeptId.trim();
-                addDeptData(myName, myDept);
+                addDeptData(myName);
             } else if (answers.add === "Role") {
                 const myTitle = answers.addRoleTitle.trim();
                 const mySalary = parseFloat(answers.addRoleSalary.trim());
-                addRoleData(myTitle, mySalary);
+                const myRoleDept = parseInt(answers.addRoleDepartment);
+                addRoleData(myTitle, mySalary, myRoleDept);
             }
 
             mainMenu();
@@ -552,7 +560,7 @@ function mainMenu() {
                 viewRoleData(viewId);
             } else if (answers.view === "Budget") {
                 //viewBudget();
-                //console.log("Bugdet overview not yet implemented");
+                console.log("Bugdet overview not yet implemented");
             }
             mainMenu();
         }
@@ -563,10 +571,11 @@ function mainMenu() {
                 updateEmployee(answers.updateEmployeeFirst, answers.updateEmployeeLast, parseInt(answers.updateEmployeeRole), parseInt(answers.updateEmployeeManager), parseInt(answers.updateId));
 
             } else if (answers.update === "Department") {
-                updateDepartment(answers.updateDeptName, parseInt(answers.updateDeptId), parseInt(answers.updateId));
+                updateDepartment(answers.updateDeptName, parseInt(answers.updateId));
 
             } else if (answers.update === "Role") {
-                updateRole(answers.updateRoleTitle, parseFloat(answers.updateRoleSalary), parseInt(answers.updateId));
+                console.log(answers.updateRoleDepartment);
+                updateRole(answers.updateRoleTitle, parseFloat(answers.updateRoleSalary), parseInt(answers.updateRoleDepartment), parseInt(answers.updateId));
             }
             mainMenu();
             // });
