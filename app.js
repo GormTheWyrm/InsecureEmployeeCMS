@@ -387,7 +387,7 @@ function viewEmployeeData(inputId) {
     // }
     if (inputId == "0") {
         connection.query(
-            `SELECT employee.id, employee.first_name, employee.last_name, job_role.title, department.name AS department_Name
+            `SELECT employee.id, employee.first_name, employee.last_name, job_role.title, job_role.salary, department.name AS department_Name
             FROM employee
             LEFT JOIN job_role
             ON employee.role_id = job_role.id
@@ -401,7 +401,7 @@ function viewEmployeeData(inputId) {
     }
     else {
         connection.query(
-            `SELECT employee.id, employee.first_name, employee.last_name, job_role.title, department.name AS department_Name
+            `SELECT employee.id, employee.first_name, employee.last_name, job_role.title, job_role.salary, department.name AS department_Name
             FROM employee
             LEFT JOIN job_role
             ON employee.role_id = job_role.id
