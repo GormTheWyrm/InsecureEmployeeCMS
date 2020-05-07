@@ -15,25 +15,25 @@ if (process.env.JAWSDB_URL) {
 
         // Your port; if not 3306
         port: 3306,
-    
+
         // Your username
         user: "root",
-    
+
         // Your password
         password: "123",
         //your database
         database: "open_employee_db"
 
-    });  
+    });
 }
 connection.connect(function (err) {
     if (err) {
-      console.error("error connecting: " + err.stack);
-      return;
+        console.error("error connecting: " + err.stack);
+        return;
     }
     console.log("connected as id " + connection.threadId);
-  });
-    
+});
+
 
 
 
@@ -86,9 +86,6 @@ questions = [
         type: "input",
         name: "viewId",
         message: "Enter the ID for the object you want to view. An ID of 0 will return the first 1000 options",
-        //could update this to search by names but ID is easier for now
-        //should search by employee id, department id, role
-        //should department searc hby department id or plain id?
         when: function (answers) {
             return answers.action === "View";
         }
@@ -140,7 +137,6 @@ questions = [
         }
     },
     //ADD FUNCTION INPUTS - Department
-    //add; name and department id
     {
         type: "input",
         name: "addDeptName",
@@ -221,7 +217,6 @@ questions = [
         type: "input",
         name: "updateEmployeeRole",
         message: "Enter a new Role ID for this employee",
-        //would be great to have search for names functionality
         when: function (answers) {
             if (answers.action === "Update" && answers.update === "Employee") { return true }
         }
@@ -245,14 +240,6 @@ questions = [
     //     choices: [{ name: "Dept Name" }, { name: "Dept ID" }],
     //     when: function (answers) {
     //         return answers.update === "Department";
-    //     }
-    // },
-    // {
-    //     type: "input",
-    //     name: "updateDeptId",
-    //     message: "Enter a new Dept ID for this department",
-    //     when: function (answers) {
-    //         if (answers.action === "Update" && answers.update === "Department") { return true }
     //     }
     // },
     {
@@ -302,9 +289,6 @@ questions = [
         type: "input",
         name: "deleteId",
         message: "Enter the ID for the object you want to delete",
-        //could update this to search by names but ID is easier for now
-        //should search by employee id, department id, role
-        //should department searc hby department id or plain id?
         when: function (answers) {
             return answers.action === "Delete";
         }
@@ -344,10 +328,10 @@ function addDeptData(dName, deptId) {   //add dept
 
 }
 function addRoleData(title, salary, myRoleDept) {  //add role     
-    connection.query( 
+    connection.query(
         "INSERT INTO job_role SET ?",
         {
-            title: title,  
+            title: title,
             salary: salary,
             department_id: myRoleDept
         },
@@ -367,8 +351,8 @@ function viewDepartmentData(inputId) {
         });
         //will need to be a join
     }
-    else { 
-        connection.query("SELECT * FROM department WHERE ?", [{id: inputId}], function (err, res) {
+    else {
+        connection.query("SELECT * FROM department WHERE ?", [{ id: inputId }], function (err, res) {
             if (err) throw err;
             console.table(res);
         });
@@ -385,7 +369,7 @@ function viewRoleData(inputId) {
         //will need to be a join
     }
     else {
-        connection.query("SELECT * FROM job_role WHERE ?", [{id: inputId}], function (err, res) {
+        connection.query("SELECT * FROM job_role WHERE ?", [{ id: inputId }], function (err, res) {
             if (err) throw err;
             console.table(res);
         });
@@ -394,15 +378,38 @@ function viewRoleData(inputId) {
 }
 // VIEW EMPLOYEE DATA
 function viewEmployeeData(inputId) {
+    // if (inputId == "0") {
+    //     connection.query(`SELECT * FROM employee`, function (err, res) {
+    //         if (err) throw err;
+    //         console.table(res);
+    //     });
+    //     //will need to be a join
+    // }
     if (inputId == "0") {
-        connection.query(`SELECT * FROM employee`, function (err, res) {
-            if (err) throw err;
-            console.table(res);
-        });
+        connection.query(
+            `SELECT employee.id, employee.first_name, employee.last_name, job_role.title, department.name AS department_Name
+            FROM employee
+            LEFT JOIN job_role
+            ON employee.role_id = job_role.id
+            LEFT JOIN department
+            ON job_role.department_id = department.id;`
+            , function (err, res) {
+                if (err) throw err;
+                console.table(res);
+            });
         //will need to be a join
     }
     else {
-        connection.query("SELECT * FROM employee WHERE ?", [{id: inputId}], function (err, res) {
+        connection.query(
+            `SELECT employee.id, employee.first_name, employee.last_name, job_role.title, department.name AS department_Name
+            FROM employee
+            LEFT JOIN job_role
+            ON employee.role_id = job_role.id
+            LEFT JOIN department
+            ON job_role.department_id = department.id WHERE employee.id = ?;`
+        
+        
+        , [inputId], function (err, res) {
             if (err) throw err;
             console.table(res);
         });
@@ -443,7 +450,6 @@ function updateDepartment(name, searchId) {
             },
             {
                 id: searchId
-                //maybe should change this to depaartment_id...?
             }
         ],
         function (err, res) {
@@ -452,7 +458,7 @@ function updateDepartment(name, searchId) {
         }
     );
 }
-function updateRole(title, salary, myRoleDept, searchId) {      //will not update department_id = BROKEN
+function updateRole(title, salary, myRoleDept, searchId) {
     connection.query(
         //sql
         "UPDATE job_role SET ? WHERE ?"
@@ -476,12 +482,12 @@ function updateRole(title, salary, myRoleDept, searchId) {      //will not updat
 
 
 
-function deleteEmployee(searchId){
+function deleteEmployee(searchId) {
     //DELETE FROM ? WHERE id = ?
     connection.query(
         //sql
         "DELETE FROM employee WHERE ?",
-        [{id: searchId}],
+        [{ id: searchId }],
 
         function (err, res) {
             if (err) throw err;
@@ -489,11 +495,11 @@ function deleteEmployee(searchId){
         }
     )
 }
-function deleteDepartment(searchId){
+function deleteDepartment(searchId) {
     connection.query(
         //sql
         "DELETE FROM department WHERE ?",
-        [{id: searchId}],
+        [{ id: searchId }],
 
         function (err, res) {
             if (err) throw err;
@@ -501,11 +507,11 @@ function deleteDepartment(searchId){
         }
     )
 }
-function deleteRole(searchId){
+function deleteRole(searchId) {
     connection.query(
         //sql
         "DELETE FROM role WHERE ?",
-        [{id: searchId}],
+        [{ id: searchId }],
 
         function (err, res) {
             if (err) throw err;
@@ -582,11 +588,11 @@ function mainMenu() {
         }
         //DELETE        not yet implemented - deleteId
         else if (answers.action === "Delete") {
-            if (answers.delete === "Employee"){
+            if (answers.delete === "Employee") {
                 deleteEmployee(parseInt(answers.deleteId.trim()));
-            } else if (answers.delete === "Department"){
+            } else if (answers.delete === "Department") {
                 deleteDepartment(parseInt(answers.deleteId.trim()));
-            }else if (answers.delete === "Role"){
+            } else if (answers.delete === "Role") {
                 deleteRole(parseInt(answers.deleteId.trim()));
             }
             mainMenu();
