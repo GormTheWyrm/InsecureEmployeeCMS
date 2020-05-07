@@ -76,7 +76,8 @@ questions = [
         type: "list",
         name: "view",
         message: "View an Employee, Department, or Role?",
-        choices: ["Employee", "Department", "Role", "Budget"],
+        choices: ["Employee", "Department", "Role"],
+        //, "Budget"
         when: function (answers) {
             return answers.action === "View";
         }
