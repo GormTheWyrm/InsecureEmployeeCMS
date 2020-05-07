@@ -22,10 +22,18 @@ ON job_role.department_id = department.id;
 
 -- view role
 -- want to see the dept name in this
-SELECT job_role.title, job_role.salary, department.name
+
+-- SELECT job_role.title, job_role.salary, department.name
+-- FROM job_role
+-- LEFT JOIN department.name
+-- ON job_role.department_id = department.id;
+
+-- role!
+SELECT job_role.id, job_role.title, job_role.salary, department.name
 FROM job_role
-LEFT JOIN department.name
-ON job_role.department_id = department.id;
+LEFT JOIN department
+ON job_role.id = department.id;
+-- this did something!
 
 -- view department
 -- skipping any joins for department

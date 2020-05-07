@@ -349,31 +349,37 @@ function viewDepartmentData(inputId) {
             if (err) throw err;
             console.table(res);
         });
-        //will need to be a join
     }
     else {
         connection.query("SELECT * FROM department WHERE ?", [{ id: inputId }], function (err, res) {
             if (err) throw err;
             console.table(res);
         });
-        //probably needs to be a join...
     }
 }
 // VIEW ROLE
 function viewRoleData(inputId) {
     if (inputId == "0") {
-        connection.query(`SELECT * FROM job_role`, function (err, res) {
+        connection.query(`
+        SELECT job_role.id, job_role.title, job_role.salary, department.name
+        FROM job_role
+        LEFT JOIN department
+        ON job_role.id = department.id;
+        `, function (err, res) {
             if (err) throw err;
             console.table(res);
         });
-        //will need to be a join
     }
     else {
-        connection.query("SELECT * FROM job_role WHERE ?", [{ id: inputId }], function (err, res) {
+        connection.query(
+            `SELECT job_role.id, job_role.title, job_role.salary, department.name
+            FROM job_role
+            LEFT JOIN department
+            ON job_role.id = department.id WHERE job_role.id = ?;`
+             , [inputId], function (err, res) {
             if (err) throw err;
             console.table(res);
         });
-        //probably needs to be a join...
     }
 }
 // VIEW EMPLOYEE DATA
