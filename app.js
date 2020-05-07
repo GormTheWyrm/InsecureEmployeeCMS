@@ -361,7 +361,7 @@ function viewDepartmentData(inputId) {
 function viewRoleData(inputId) {
     if (inputId == "0") {
         connection.query(`
-        SELECT job_role.id, job_role.title, job_role.salary, department.name
+        SELECT job_role.id, job_role.title, job_role.salary, department.name AS department_name
         FROM job_role
         LEFT JOIN department
         ON job_role.id = department.id;
@@ -372,7 +372,7 @@ function viewRoleData(inputId) {
     }
     else {
         connection.query(
-            `SELECT job_role.id, job_role.title, job_role.salary, department.name
+            `SELECT job_role.id, job_role.title, job_role.salary, department.name AS department_name
             FROM job_role
             LEFT JOIN department
             ON job_role.id = department.id WHERE job_role.id = ?;`
@@ -384,13 +384,7 @@ function viewRoleData(inputId) {
 }
 // VIEW EMPLOYEE DATA
 function viewEmployeeData(inputId) {
-    // if (inputId == "0") {
-    //     connection.query(`SELECT * FROM employee`, function (err, res) {
-    //         if (err) throw err;
-    //         console.table(res);
-    //     });
-    //     //will need to be a join
-    // }
+
     if (inputId == "0") {
         connection.query(
             `SELECT employee.id, employee.first_name, employee.last_name, job_role.title, job_role.salary, department.name AS department_Name
@@ -403,7 +397,6 @@ function viewEmployeeData(inputId) {
                 if (err) throw err;
                 console.table(res);
             });
-        //will need to be a join
     }
     else {
         connection.query(
@@ -419,7 +412,6 @@ function viewEmployeeData(inputId) {
             if (err) throw err;
             console.table(res);
         });
-        //probably needs to be a join...
     }
 }
 //  UPDATE
