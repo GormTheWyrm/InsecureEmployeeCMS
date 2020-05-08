@@ -28,13 +28,14 @@ manager_id int (10) NULL,
 PRIMARY KEY (id)
 );
 -- ~~~~~~~~~~~~~~~~~~~~~~~
-
-insert into employee (first_name, last_name, role_id, manager_id)
-VALUES ("TestName", "Middle", 1, 1);
+-- remove the "--" and run the below code to seed your program with a test example
+-- ~~~~~~~~~~~~~~~~~~~~~~~
+-- insert into employee (first_name, last_name, role_id, manager_id)
+-- VALUES ("TestName", "Middle", 1, 1);
 -- 
-insert into job_role (title, salary, department_id)
-VALUES ("Trainer", 13.27, 1);
+-- insert into job_role (title, salary, department_id)
+-- VALUES ("TestRol", 13.27, 1);
 -- 
-insert into department (name)
-VALUES ("Testing Department");
+-- insert into department (name)
+-- VALUES ("TestDepartment");
 -- ~~~~~~~~~~~~~~~~~~~

@@ -1,3 +1,5 @@
+-- this file contains a few useful operations
+
 SELECT * FROM department;
 SELECT * FROM employee;
 SELECT * FROM job_role;
@@ -6,10 +8,6 @@ SELECT * FROM job_role;
 USE open_employee_db;
 
 UPDATE employee SET first_name = "Jim" WHERE id = 1;
-
-
--- definitely need an outer join
--- join role_id with job_role.title... and department_id with job_role.department_id
 
 
 -- this should work for viewing employees

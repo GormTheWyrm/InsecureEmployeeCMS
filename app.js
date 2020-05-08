@@ -5,34 +5,94 @@ const inquirer = require("inquirer");
 const mysql = require("mysql");
 const cTable = require("console.table");
 
+
+// let myPassword = "";
+// let myUsername = "root";
 let connection;
-if (process.env.JAWSDB_URL) {
-    connection = mysql.createConnection(process.env.JAWSDB_URL);
-} else {
-    connection = mysql.createConnection({
 
-        host: "localhost",
 
-        // Your port; if not 3306
-        port: 3306,
+function init() {
+    inquirer.prompt(
+        // create a prompt to get username and password
+        [
+            {
+                type: "input",
+                name: "username",
+                message: "Enter your username for mysql. If you do not remember setting one un, try 'root'",
+            },
+            {
+                type: "input",
+                name: "pw",
+                message: "Enter your password for connecting to mySQL, if you do not remember setting one up, try leaving field blank"
+            },
+            {
+                type: "input",
+                name: "port",
+                message: "Enter your port for connecting to mySQL, the standard port is 3306"
+            }
+            // other ports not implemented yet
+        ]
 
-        // Your username
-        user: "root",
+    ).then(function (loginCred) {
 
-        // Your password
-        password: "123",
-        //your database
-        database: "open_employee_db"
+        connection = mysql.createConnection({
 
+            host: "localhost",
+
+            // Your port; if not 3306
+            port: loginCred.port,
+
+            // Your username
+            user: loginCred.username,
+
+            // Your password
+            password: loginCred.pw,
+            //your database
+            database: "open_employee_db"
+
+        });
+        connection.connect(function (err) {
+            if (err) {
+                console.error("error connecting: " + err.stack);
+                return;
+                //make this exit
+            }
+            console.log("connected as id " + connection.threadId);
+        });
+        mainMenu();
     });
 }
-connection.connect(function (err) {
-    if (err) {
-        console.error("error connecting: " + err.stack);
-        return;
-    }
-    console.log("connected as id " + connection.threadId);
-});
+
+
+// if (process.env.JAWSDB_URL) {
+//     connection = mysql.createConnection(process.env.JAWSDB_URL);
+// } else {
+//     connection = mysql.createConnection({
+
+//         host: "localhost",
+
+//         // Your port; if not 3306
+//         port: 3306,
+
+//         // Your username
+//         user: myUsername,
+
+//         // Your password
+//         password: myPassword,
+//         //your database
+//         database: "open_employee_db"
+
+//     });
+// }
+// connection.connect(function (err) {
+//     if (err) {
+//         console.error("error connecting: " + err.stack);
+//         return;
+//         //make this exit
+//     }
+//     console.log("connected as id " + connection.threadId);
+// });
+// mainMenu();
 
 
 
@@ -377,10 +437,10 @@ function viewRoleData(inputId) {
             FROM job_role
             LEFT JOIN department
             ON job_role.id = department.id WHERE job_role.id = ?;`
-             , [inputId], function (err, res) {
-            if (err) throw err;
-            console.table(res);
-        });
+            , [inputId], function (err, res) {
+                if (err) throw err;
+                console.table(res);
+            });
     }
 }
 // VIEW EMPLOYEE DATA
@@ -407,12 +467,12 @@ function viewEmployeeData(inputId) {
             ON employee.role_id = job_role.id
             LEFT JOIN department
             ON job_role.department_id = department.id WHERE employee.id = ?;`
-        
-        
-        , [inputId], function (err, res) {
-            if (err) throw err;
-            console.table(res);
-        });
+
+
+            , [inputId], function (err, res) {
+                if (err) throw err;
+                console.table(res);
+            });
     }
 }
 //  UPDATE
@@ -457,15 +517,15 @@ function updateDepartment(name, searchId) {
         }
     );
 }
-function updateRole(title, salary, myRoleDept, searchId) {
+function updateRole(myTitle, mySalary, myRoleDept, searchId) {
     connection.query(
         //sql
         "UPDATE job_role SET ? WHERE ?"
         ,
         [
             {
-                title: title,
-                salary: salary,
+                title: myTitle,
+                salary: mySalary,   //perhaps float is breaking this because of decimal points?
                 department_id: myRoleDept
             },
             {
@@ -579,8 +639,9 @@ function mainMenu() {
                 updateDepartment(answers.updateDeptName, parseInt(answers.updateId));
 
             } else if (answers.update === "Role") {
-                console.log(answers.updateRoleDepartment);
-                updateRole(answers.updateRoleTitle, parseFloat(answers.updateRoleSalary), parseInt(answers.updateRoleDepartment), parseInt(answers.updateId));
+                console.log(typeof parseFloat(answers.updateRoleSalary));
+                console.log(answers.updateRoleTitle + parseFloat(answers.updateRoleSalary) + parseInt(answers.updateRoleDepartment) + parseInt(answers.updateId));
+                updateRole(answers.updateRoleTitle, parseFloat(answers.updateRoleSalary).toFixed(2), parseInt(answers.updateRoleDepartment), parseInt(answers.updateId));
             }
             mainMenu();
             // });
@@ -611,7 +672,8 @@ function mainMenu() {
 }
 
 /* **** Main App Here **** */
-mainMenu();
+init();
+// mainMenu();
 
 //adding works for employee, department, role
 //view works for all for employee, department, role

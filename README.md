@@ -8,9 +8,10 @@ This application is dependent on the mysql, express and console-table modules fo
 To set up this app on your own computer:  
 1. install mysql and mysql workbench
 2. clone the repository at https://github.com/GormTheWyrm/InsecureEmployeeCMS onto your own computer
-3. You will need to open app.js and manually change lines 20 and 23 to reflect your user and password. You may also need to change line 14 if you are using a differnt port.
-4. open the root directory in terminal with node.js. I use visual studio code but other programs may be used.
-5. run the application by typing "node app.js" in the terminal
+3. open the root directory in terminal with node.js. I use visual studio code but other programs may be used.
+4. enter "npm i" to install all the node modules required to run the program.
+5. open and run the seed.sql file (under the assets folder) with mysql. This should create an empty database and tables
+6. run the application by typing "node app.js" in the terminal
 ![gif of opening file](/assets/openingDemo.gif)
 
 ## Using the Program
@@ -23,10 +24,9 @@ Users can add, update and remove employees, departments and job roles.
 Employee data includes first and last names, a job role ID a department ID, and the ID of their supervisor
 
 There is currently minimal Error handling. inputing a bad answer will simply end the program. If that happens, just type "node app.js" to get back in. If the command line does not reappear you may need to click on the terminal and press "ctrl" & "c" to manually break out of the program.  
-Otherwise, selectign "exit" should exit the application.
+Otherwise, selecting "exit" should exit the application.
 
 ## Current bugs and needed improvements;
-I need to add a prompt to get the users username and password so that they do not need have to manually change the app.js file
 
 There are several other features I would have liked to have included if I had more time:  
 + managers are not yet implemented.
