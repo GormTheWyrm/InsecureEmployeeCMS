@@ -646,7 +646,7 @@ function mainMenu() {
             mainMenu();
             // });
         }
-        //DELETE        not yet implemented - deleteId
+        //DELETE        
         else if (answers.action === "Delete") {
             if (answers.delete === "Employee") {
                 deleteEmployee(parseInt(answers.deleteId.trim()));
@@ -675,30 +675,4 @@ function mainMenu() {
 init();
 // mainMenu();
 
-//adding works for employee, department, role
-//view works for all for employee, department, role
-//not joined yet
-/* ~~~~~~~~ */
-
-
-
-//consider where to put a "view by manager option"
-//move questions into a new file
-// write functions- and sql
-
-
-//add update
-//add delete
-//will need to make view into a join function...
-//will want to xx.trim() some values...
-
-//maybe I should make it so that non number ids or some such will bring up entire table instead of id = 0 being show table...
-//id = all
-
-//dynamic column names might be breaking the mysql code that returns the result... may need ot manually write out what is updated/added
-//console logging or console tabling my "res" from the add queries are only giving me back the fields field, which is supposed to be optional
-//view dept and role is not returning individual results, only thr select all table
-
-
-//need to make app handle errors when people add departments with same dept numbers
-//and roles with same role id...
+//update role is still broken
